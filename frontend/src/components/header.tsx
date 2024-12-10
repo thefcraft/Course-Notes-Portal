@@ -43,14 +43,21 @@ export default function Header({ user }: {user:User|null}) {
             </PopoverTrigger>
             <PopoverContent className="w-56 p-4">
               <nav className="flex flex-col space-y-4">
-                <Link to="/roadmaps">Roadmaps</Link>
-                <Link to="/resources">Resources</Link>
-                <Link to="/projects">Projects</Link>
-                <Link to="/courses">Courses</Link>
-                <Link to="/community">Community</Link>
-                <Button asChild>
-                  <Link to="/login">Login</Link>
-                </Button>
+                {isVerified?
+                  <>
+                    <Link to="/dashboard">Dashboard</Link>
+                    <Button asChild>
+                      <Link to="/logout">Logout</Link>
+                    </Button>
+                  </>
+                  :
+                  <>
+                    <Link to="/about">About</Link>
+                    <Button asChild>
+                      <Link to="/login">Login</Link>
+                    </Button>
+                  </>
+                }
               </nav>
             </PopoverContent>
           </Popover>

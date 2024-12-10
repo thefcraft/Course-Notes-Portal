@@ -88,6 +88,7 @@ const Dashboard = () => {
 
   return (
     <>
+      <div className='text-center mt-3 h-0'>Just Auth done yet [working on other pages ] ... <br/> Go to /signup and other auth related pages</div>
       <Loading/>
     </>
     // <div className="space-y-6">
