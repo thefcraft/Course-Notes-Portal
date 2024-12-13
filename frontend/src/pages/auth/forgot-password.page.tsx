@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Icons } from "@/components/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuthStore } from '@/store/authStore'
+import { authPrefix } from './constants.auth'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -23,7 +24,7 @@ export default function ForgotPasswordPage() {
       await forgotPassword(email);
       setSuccess(true)
       setTimeout(() => {
-        navigate('/login')
+        navigate(`${authPrefix}/login`)
       }, 3000)
     } catch (error) {
         console.log(error);
@@ -85,7 +86,7 @@ export default function ForgotPasswordPage() {
 
         <p className="px-8 text-center text-sm text-muted-foreground">
           <Link 
-            to="/login"
+            to={`${authPrefix}/login`}
             className="underline underline-offset-4 hover:text-primary"
           >
             Back to Login

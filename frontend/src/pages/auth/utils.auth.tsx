@@ -1,18 +1,19 @@
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { ReactNode } from "react";
+import { authPrefix } from "./constants.auth";
 
 // protect routes that require authentication
 export const ProtectedRoute = ({ children }: {children: ReactNode}) => {
 	const { isAuthenticated, user } = useAuthStore();
 
 	if (!isAuthenticated || !user) {
-		return <Navigate to='/login' replace />;
+		return <Navigate to={`${authPrefix}/login`} replace />;
 	}
 
 	if (!user.isVerified) {
 		const encodedEmail = encodeURIComponent(user.email);
-		return <Navigate to={`/verify-email?email=${encodedEmail}`} replace />;
+		return <Navigate to={`${authPrefix}/verify-email?email=${encodedEmail}`} replace />;
 	}
 
 	return children;

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 
 import { Loading } from '@/components/utils';
+import Footer from "@/components/footer";
 
 const StatCard = ({ icon, title, value, color }: { icon: ReactNode, title: string, value: string, color: string }) => (
   <div className={`bg-white p-6 rounded-lg shadow-md flex items-center ${color}`}>
@@ -87,10 +88,12 @@ const Dashboard = () => {
   ];
 
   return (
-    <>
-      <div className='text-center mt-3 h-0'>Just Auth done yet [working on other pages ] ... <br/> Go to /signup and other auth related pages</div>
+    <div>
+      <div className='text-center h-0'>Just Auth done yet [working on other pages ] ... <br/> Go to /signup and other auth related pages</div>
       <Loading/>
-    </>
+      <div className='h-screen'></div>
+      <Footer/>
+    </div>
     // <div className="space-y-6">
     //   <div className="flex items-center mb-6">
     //     <BookOpen className="mr-3 text-blue-600" size={32} />

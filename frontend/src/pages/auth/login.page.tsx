@@ -7,7 +7,7 @@ import { Space } from '@/components/utils'
 import { useAuthStore } from '@/store/authStore'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useNavigate, Link } from 'react-router-dom'
-
+import { authPrefix } from './constants.auth'
 export default function LoginPage() {
   const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -109,7 +109,7 @@ export default function LoginPage() {
         
         <p className="px-8 text-center text-sm text-muted-foreground">
           <Link
-            to="/signup"
+            to={`${authPrefix}/signup`}
             className="hover:text-brand underline underline-offset-4"
           >
             Don&apos;t have an account? Sign Up
@@ -117,7 +117,7 @@ export default function LoginPage() {
         </p>
         <p className="px-8 text-center text-sm text-muted-foreground mt-4">
           <Link
-            to="/forgot-password"
+            to={`${authPrefix}/forgot-password`}
             className="underline underline-offset-4 hover:text-primary"
           >
             Forgot Password?

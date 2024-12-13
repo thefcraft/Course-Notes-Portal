@@ -9,10 +9,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { getStrength, getPasswordStrengthColor } from '@/pages/auth/utils.auth'
+import { authPrefix } from "./constants.auth";
 export default function ResetPasswordPage() {
     // Destructure token from route parameters
     const { token } = useParams<{ token: string }>();
-    if (!token) return <Navigate to='/forgot-password' replace />;
+    if (!token) return <Navigate to={`${authPrefix}/forgot-password`} replace />;
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [passwordStrength, setPasswordStrength] = useState(0)
@@ -46,7 +47,7 @@ export default function ResetPasswordPage() {
     
         try{
             await resetPassword(token, password);
-            navigate(`/login`);
+            navigate(`${authPrefix}/login`);
         }catch(e) {
             console.log(error);
         }

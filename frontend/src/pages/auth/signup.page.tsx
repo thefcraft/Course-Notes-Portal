@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Space } from '@/components/utils'
 import { useAuthStore } from '@/store/authStore'
 import { getStrength, getPasswordStrengthColor } from '@/pages/auth/utils.auth'
-
+import { authPrefix } from './constants.auth'
 export default function SignUpPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -52,7 +52,7 @@ export default function SignUpPage() {
     try{
 			await signup(email, password, name);
 			const encodedEmail = encodeURIComponent(email);
-			navigate(`/verify-email?email=${encodedEmail}`);
+			navigate(`${authPrefix}/verify-email?email=${encodedEmail}`);
 		}catch(e) {
 			console.log(error);
 		}
@@ -209,7 +209,7 @@ export default function SignUpPage() {
         <p className="px-8 text-center text-sm text-muted-foreground">
           Already have an account?<Space/>
           <Link
-            to="/login"
+            to={`${authPrefix}/login`}
             className="underline underline-offset-4 hover:text-primary"
           >
             Sign In

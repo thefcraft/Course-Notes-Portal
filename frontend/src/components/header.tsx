@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { ModeToggle } from "@/components/mode-toggle"
 import { User } from "@/store/authStore";
-
-export default function Header({ user }: {user:User|null}) {
+import { cn } from "@/lib/utils";
+export default function Header({ user, className }: {user:User|null, className?:string}) {
   const isVerified = user?.isVerified;
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm h-16">
-      <div className="container mx-auto px-4 py-3 h-16 flex justify-between items-center">
+    <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm h-16">
+      <div className={cn("container mx-auto px-4 py-3 h-16 flex justify-between items-center", className)}>
         <a href="/" className="text-2xl font-bold">
           Notes Share Portal
         </a>
@@ -28,9 +28,9 @@ export default function Header({ user }: {user:User|null}) {
           <ModeToggle />
           <Button asChild className="hidden md:inline-flex">
             {isVerified?
-                <Link to="/logout">Logout</Link>
+                <Link to="/auth/logout">Logout</Link>
                 :
-                <Link to="/login">Login</Link>
+                <Link to="/auth/login">Login</Link>
             }
           </Button>
           {/* Mobile Menu using Popover */}
@@ -47,14 +47,14 @@ export default function Header({ user }: {user:User|null}) {
                   <>
                     <Link to="/dashboard">Dashboard</Link>
                     <Button asChild>
-                      <Link to="/logout">Logout</Link>
+                      <Link to="/auth/logout">Logout</Link>
                     </Button>
                   </>
                   :
                   <>
                     <Link to="/about">About</Link>
                     <Button asChild>
-                      <Link to="/login">Login</Link>
+                      <Link to="/auth/login">Login</Link>
                     </Button>
                   </>
                 }

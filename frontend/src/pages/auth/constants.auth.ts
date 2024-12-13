@@ -1,0 +1,1 @@
+export const authPrefix: string = '/auth';
