@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import bcryptjs from "bcryptjs";
-import { User } from "../models/user.model.mjs";
+import User from "../models/User.model.mjs";
 import { generateTokenAndSetCookie } from "../utils/jwt.mjs";
 import { sendVerficationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from "../mailtrap/emails.mjs";
 
