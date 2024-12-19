@@ -1,7 +1,10 @@
 import React, { ChangeEvent, FormEvent, useState } from 'react';
-import { Upload, FileText, Tags, BookOpen } from 'lucide-react';
+import { Upload, FileText, Tags, BookOpen, X } from 'lucide-react';
 
-const NotesUpload = () => {
+const NotesUpload = ({ closePopup,courseName }: { 
+  closePopup: () => void ;
+  courseName:string;
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -10,109 +13,138 @@ const NotesUpload = () => {
   const [course, setCourse] = useState('');
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-      if(e.target.files){
-          const uploadedFile = e.target.files[0];
-          setFile(uploadedFile);
-      }
+    if (e.target.files) {
+      const uploadedFile = e.target.files[0];
+      setFile(uploadedFile);
+    }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Implement file upload logic
-    const formData = {
-      file,
-      title,
-      description,
-      tags: tags.split(',').map(tag => tag.trim()),
-      accessType,
-      course
-    };
-    console.log('Uploading notes:', formData);
+
+    if (!file) {
+      alert("Please upload a file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file); 
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("tags", tags);
+    formData.append("accessType", accessType);
+    formData.append("course", courseName?courseName:course);
+    console.log(formData)
+    try {
+      const response = await fetch("http://localhost:5000/api/content/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("File uploaded successfully!");
+        closePopup()
+        console.log(data); 
+      } else {
+        alert("Upload failed: " + data.error);
+      }
+    } catch (error) {
+      console.error("Error uploading notes:", error);
+      alert("Something went wrong while uploading the notes.");
+    }
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-6 flex items-center">
-        <Upload className="mr-3 text-blue-600" />
+    <div className="relative max-w-2xl mx-auto bg-white dark:bg-zinc-950 dark:bg-opacity-95 mt-4 shadow-md dark:shadow-xl rounded-lg p-6">
+      <button
+        onClick={closePopup}
+        className="absolute top-3 right-3 p-2 text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-500 focus:outline-none"
+      >
+        <X className="w-5 h-5" />
+      </button>
+      <h2 className="text-2xl font-bold mb-6 flex items-center text-blue-600 dark:text-blue-400">
+        <Upload className="mr-3" />
         Upload Notes
       </h2>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="mb-2 flex items-center">
-            <FileText className="mr-2 text-gray-600" />
+          <label className="mb-2 flex items-center text-zinc-600 dark:text-zinc-300">
+            <FileText className="mr-2" />
             File Upload
           </label>
-          <input 
-            type="file" 
-            accept=".pdf,.docx,.txt" 
+          <input
+            type="file"
             onChange={handleFileUpload}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
             required
           />
         </div>
 
         <div>
-          <label className="mb-2 flex items-center">
-            <BookOpen className="mr-2 text-gray-600" />
+          <label className="mb-2 flex items-center text-zinc-600 dark:text-zinc-300">
+            <BookOpen className="mr-2" />
             Course Name
           </label>
-          <input 
-            type="text" 
-            value={course}
-            onChange={(e) => setCourse(e.target.value)}
+          <input
+            type="text"
+            value={courseName?courseName:course}
+            onChange={(e) => setCourse(courseName?courseName:e.target.value)}
             placeholder="Enter course name"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white cursor-not-allowed"
             required
+            disabled={courseName}
           />
         </div>
 
         <div>
-          <label className="mb-2 flex items-center">
-            <FileText className="mr-2 text-gray-600" />
+          <label className="mb-2 flex items-center text-zinc-600 dark:text-zinc-300">
+            <FileText className="mr-2" />
             Title
           </label>
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter notes title"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
             required
           />
         </div>
 
         <div>
-          <label className="mb-2 flex items-center">
-            <Tags className="mr-2 text-gray-600" />
+          <label className="mb-2 flex items-center text-zinc-600 dark:text-zinc-300">
+            <Tags className="mr-2" />
             Tags
           </label>
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             placeholder="Enter tags (comma-separated)"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
           />
         </div>
 
         <div>
-          <label className="block mb-2">Description</label>
-          <textarea 
+          <label className="block mb-2 text-zinc-600 dark:text-zinc-300">Description</label>
+          <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter a brief description of the notes"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
             rows={4}
           />
         </div>
 
         <div>
-          <label className="block mb-2">Access Control</label>
-          <select 
+          <label className="block mb-2 text-zinc-600 dark:text-zinc-300">Access Control</label>
+          <select
             value={accessType}
             onChange={(e) => setAccessType(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
           >
             <option value="public">Public</option>
             <option value="branch">Restricted to Branch</option>
@@ -120,9 +152,9 @@ const NotesUpload = () => {
           </select>
         </div>
 
-        <button 
-          type="submit" 
-          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors"
         >
           Upload Notes
         </button>

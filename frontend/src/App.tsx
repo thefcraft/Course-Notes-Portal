@@ -6,12 +6,16 @@ import { useEffect } from "react";
 // import Sidebar from "@/components/sidebar";
 import {LoginPage, SignUpPage, EmailVerificationPage, LogoutPage, ForgotPasswordPage, ResetPasswordPage, ProtectedRoute, RedirectAuthenticatedUser} from "@/pages/auth";
 import NotesUpload from "@/components/upload";
+import ViewNotes from "@/components/viewNotes";
 import Dashboard from "@/pages/dashboard";
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider"
 import { Error404Page, Error500Page, ErrorBackendPage } from "@/pages/error";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar";
+import ViewCourse from "./components/viewCourse";
+import AllCourses from "./components/allCourses";
+import AddCourse from "./components/addCourse";
 
 function App() {
   	const {isCheckingAuth, checkAuth, isAuthenticated, user} = useAuthStore(); 
@@ -64,6 +68,10 @@ function App() {
 								<Route path="/" element={<>Home Page</>} />
 								<Route path="/dashboard" element={<Dashboard />} />
 			 		  			<Route path="/upload" element={<NotesUpload />}/>
+			 		  			<Route path="/view/:id" element={<ViewNotes />}/>
+			 		  			<Route path="/view-course/:id" element={<ViewCourse />}/>
+			 		  			<Route path="/all-courses" element={<AllCourses />}/>
+			 		  			<Route path="/add-course" element={<AddCourse />}/>
 								{/* 404 */}
 								<Route path="/*" element={<Error404Page/>}/>
 							</Routes>

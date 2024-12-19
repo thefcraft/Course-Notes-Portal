@@ -359,18 +359,18 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Course",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Upload Notes",
+          url: "/upload",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "All Courses",
+          url: "/all-courses",
         },
         {
           title: "Settings",

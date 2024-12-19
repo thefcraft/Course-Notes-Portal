@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpiresAt: Date,
     verificationToken: String,
     verificationExpiresAt: Date,
+    role: {
+        type:String,
+        default:"user"
+    },
 }, {timestamps: true}); // created and updated fields are automatically added using timestamps: true
 
 
