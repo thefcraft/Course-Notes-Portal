@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import bcryptjs from "bcryptjs";
-import { User } from "../models/user.model.mjs";
+import User from "../models/User.model.mjs";
 import { generateTokenAndSetCookie } from "../utils/jwt.mjs";
 import { sendVerficationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from "../mailtrap/emails.mjs";
 
@@ -142,7 +142,7 @@ export const forgotPassword = async (req, res) => {
 
         await sendPasswordResetEmail(user.email, `http://127.0.0.1:5000/reset-password/${resetToken}`);
 
-        return res.status(200).json({success: true, message: "Password reset link sent successfully"});
+        return res.status(200).json({success: true, message: "Password reset link sent successfully", resetToken}); // TODO remove resetToken in prod
 
     }catch(error){
         console.log("error in forgot password", error);

@@ -33,4 +33,6 @@ const userSchema = new mongoose.Schema({
 }, {timestamps: true}); // created and updated fields are automatically added using timestamps: true
 
 
-export const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+
+export default User;

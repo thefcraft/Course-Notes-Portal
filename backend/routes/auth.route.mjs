@@ -7,6 +7,9 @@ const router = express.Router();
 router.use(express.json()); // to parse request.body as JSON
 router.use(cookieParser()); // to parse cookie
 
+
+
+
 router.get('/check-auth', verifyToken, checkAuth);
 
 router.post('/signup', signup);
