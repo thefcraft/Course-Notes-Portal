@@ -5,7 +5,6 @@ import { connectDB } from './db/connectDB.mjs';
 import {v2 as cloudinary} from  'cloudinary';
 
 
-import authRoutes from './routes/auth.route.mjs';
 import contentRoute from './routes/content.route.mjs';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.route.mjs';
@@ -16,7 +15,7 @@ import notesRoutes from './routes/notes.routes.mjs';
 
 
 dotenv.config()
-const PORT = process.env.BACKEND_PORT || 5001;
+const PORT = process.env.BACKEND_PORT || 5000;
 const app = express();
 
 

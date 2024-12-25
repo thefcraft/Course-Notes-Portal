@@ -135,13 +135,12 @@ function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
+    name: string;
+    avatar: any;
+    email: string;
   }
 }) {
   const { isMobile } = useSidebar()
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -152,12 +151,12 @@ function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage src={user?.avatar} alt={user?.name} />
+                <AvatarFallback className="rounded-lg">{user?.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-semibold">{user?.name}</span>
+                <span className="truncate text-xs">{user?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -171,12 +170,12 @@ function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={user?.avatar} alt={user?.name} />
+                  <AvatarFallback className="rounded-lg">{user?.name.slice(0, 2)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-semibold">{user?.name}</span>
+                  <span className="truncate text-xs">{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -280,6 +279,7 @@ function NavProjects({
 
 function NavMain({
   items,
+  role,
 }: {
   items: {
     title: string
@@ -289,45 +289,54 @@ function NavMain({
     items?: {
       title: string
       url: string
-    }[]
-  }[]
+    }[],
+    authorize: string
+  }[],
+  role: string;
 }) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className="group/collapsible"
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        ))}
+        {items.map((item) => {
+          if (item.authorize === 'admin' && role !== 'admin') {
+            return null;
+          }
+
+          return (
+            <Collapsible
+              key={item.title}
+              asChild
+              defaultOpen={item.isActive}
+              className="group/collapsible"
+            >
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip={item.title}>
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {item.items?.map((subItem) => (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild>
+                          <a href={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </a>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
+          );
+        })}
       </SidebarMenu>
+
     </SidebarGroup>
   )
 }
@@ -359,90 +368,77 @@ const data = {
   ],
   navMain: [
     {
-      title: "Course",
-      url: "#",
+      title: "Courses",
+      url: "all-courses",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "Upload Notes",
-          url: "/upload",
-        },
-        {
           title: "All Courses",
           url: "/all-courses",
         },
-        {
-          title: "Settings",
-          url: "#",
-        },
       ],
+      authorize: "user",
+
     },
     {
-      title: "Models",
-      url: "#",
+      title: "Admin Tools",
+      url: "/users",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
+          title: "All Users",
+          url: "/users",
         },
       ],
+      authorize: "admin",
     },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
+    // {
+    //   title: "Documentation",
+    //   url: "#",
+    //   icon: BookOpen,
+    //   items: [
+    //     {
+    //       title: "Introduction",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Get Started",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Tutorials",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Changelog",
+    //       url: "#",
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: "Settings",
+    //   url: "#",
+    //   icon: Settings2,
+    //   items: [
+    //     {
+    //       title: "General",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Team",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Billing",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Limits",
+    //       url: "#",
+    //     },
+    //   ],
+    // },
   ],
   projects: [
     {
@@ -465,7 +461,8 @@ const data = {
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: any) {
+
   const { toggleSidebar, state } = useSidebar()
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -473,14 +470,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={data.navMain} role={props?.user?.role} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={props.user} />
       </SidebarFooter>
       <SidebarRail />
-      <div className="absolute right-0 z-50 w-6 pl-[2px] -mr-[26px] h-6 top-5"> 
+      <div className="absolute right-0 z-50 w-6 pl-[2px] -mr-[26px] h-6 top-5">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -489,14 +486,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="w-3 h-6"
               onClick={toggleSidebar}
             >
-              {state==="collapsed"?<ChevronRight />:<ChevronLeft/>}
+              {state === "collapsed" ? <ChevronRight /> : <ChevronLeft />}
             </Button>
           </TooltipTrigger>
           <TooltipContent
             side="right"
             align="center"
           >
-            {state==="collapsed"?<>Open</>:<>Close</>}
+            {state === "collapsed" ? <>Open</> : <>Close</>}
           </TooltipContent>
         </Tooltip>
       </div>
@@ -507,13 +504,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 // import React from 'react';
 // import { Link } from 'react-router-dom';
-// import { 
-//   Home, 
-//   Upload, 
-//   Search, 
-//   User, 
-//   Star, 
-//   FolderPlus 
+// import {
+//   Home,
+//   Upload,
+//   Search,
+//   User,
+//   Star,
+//   FolderPlus
 // } from 'lucide-react';
 
 // const Sidebar = () => {
@@ -533,9 +530,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 //       </div>
 //       <nav className="py-4">
 //         {menuItems.map((item, index) => (
-//           <Link 
-//             key={index} 
-//             to={item.path} 
+//           <Link
+//             key={index}
+//             to={item.path}
 //             className="flex items-center p-4 hover:bg-blue-50 transition-colors"
 //           >
 //             <span className="mr-3 text-gray-600">{item.icon}</span>

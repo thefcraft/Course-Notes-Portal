@@ -28,6 +28,34 @@ export const RedirectAuthenticatedUser = ({ children }: {children: ReactNode}) =
 
 	return children;
 };
+export const AdminRoute = ({ children }: { children: JSX.Element }) => {
+  const { user, isCheckingAuth } = useAuthStore();
+
+  if (isCheckingAuth) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user || user.role !== "admin") {
+    console.log("Unauthorized access, redirecting to /all-courses");
+    return <Navigate to="/all-courses" replace />;
+  }
+
+  console.log("Authorized access, rendering children");
+  return children;
+};
+
+export const CRRoute = ({  children }: { children: JSX.Element }) => {
+  const { user, isCheckingAuth } = useAuthStore();
+  if (isCheckingAuth) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user || (user.role !== "admin" && user.role !== "cr") ) {
+    return <Navigate to="/all-courses" replace />;
+  }
+  return children;
+};
+
 
 
 export const getStrength = (pass: string): {strength: number, label: string} => {

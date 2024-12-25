@@ -11,6 +11,7 @@ export const addCourse = async (req, res) => {
     if (!courseName || !courseCode || !semester) {
       return res.status(400).json({ error: 'Course name is required' });
     }
+    // courseCode = courseCode.replace(/\s+/g, '').toUpperCase();
     const existingCourse = await Course.findOne({ courseCode });
     if (existingCourse) {
       return res.status(400).json({ error: 'Course already exists' });
@@ -134,7 +135,8 @@ export const getNoteById = async (req, res) => {
 //get-course-byId
 export const getCourse = async (req, res) => {
   try {
-
+    const user=req
+    
     const courseId = req.params.id;
 
     const course = await Course.findById(courseId).populate('notes');
@@ -152,7 +154,6 @@ export const getCourse = async (req, res) => {
 //get-allCourses
 export const getAllCourses = async (req, res) => {
   try {
-
     const courses = await Course.find().populate('notes');
     if (!courses || courses.length === 0) {
       return res.status(404).json({ error: 'No courses found' });

@@ -8,6 +8,7 @@ axios.defaults.withCredentials = true;
 
 // Define types for User, State, and the actions (signup, etc.)
 export interface User {
+  [x: string]: string;
 	id: string;
 	email: string;
 	name: string;
@@ -61,6 +62,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 				error: null,
 				isLoading: false,
 			});
+			
 		} catch (error: any) {
 			set({ error: error.response?.data?.message || "Error logging in", isLoading: false });
 			throw error;

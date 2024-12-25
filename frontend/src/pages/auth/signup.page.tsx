@@ -53,7 +53,7 @@ export default function SignUpPage() {
 			await signup(email, password, name);
 			const encodedEmail = encodeURIComponent(email);
 			navigate(`${authPrefix}/verify-email?email=${encodedEmail}`);
-		}catch(e) {
+		}catch {
 			console.log(error);
 		}
   }

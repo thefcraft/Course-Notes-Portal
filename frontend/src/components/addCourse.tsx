@@ -1,17 +1,26 @@
 import React, { useState, FormEvent } from 'react';
 import { BookOpen, Code, Check, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
   const [courseName, setCourseName] = useState('');
   const [courseCode, setCourseCode] = useState('');
   const [semester, setSemester] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
-    // Validate form
-    if (!courseName || !courseCode) {
+    if (!courseName || !courseCode || !semester) {
       alert("Please fill in all fields");
+      setLoading(false);
+      return;
+    }
+
+    if (isNaN(Number(semester))) {
+      alert("Semester should be a number");
+      setLoading(false);
       return;
     }
 
@@ -21,27 +30,28 @@ const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ courseName, courseCode,semester }),
+        body: JSON.stringify({ courseName, courseCode, semester }),
+        credentials:'include'
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert("Course added successfully!");
-        closePopup(); // Close the popup on success
-        console.log(data); // Handle success, possibly navigate or reset form
+        toast.success("Course added successfully!");
+        closePopup();
       } else {
-        alert("Failed to add course: " + data.error);
+        toast.error(data.error);
       }
     } catch (error) {
       console.error("Error adding course:", error);
-      alert("Something went wrong while adding the course.");
+      toast.error("Something went wrong while adding the course.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="relative max-w-xl mx-auto bg-white dark:bg-zinc-950 dark:bg-opacity-90 mt-4 shadow-md dark:shadow-xl rounded-lg p-6">
-      {/* Close Icon */}
       <button
         onClick={closePopup}
         className="absolute top-3 right-3 p-2 text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-500 focus:outline-none"
@@ -55,7 +65,6 @@ const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Course Name */}
         <div>
           <label className="mb-2 flex items-center text-zinc-600 dark:text-zinc-300">
             <BookOpen className="mr-2" />
@@ -71,7 +80,6 @@ const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
           />
         </div>
 
-        {/* Course Code */}
         <div>
           <label className="mb-2 flex items-center text-zinc-600 dark:text-zinc-300">
             <Code className="mr-2" />
@@ -86,25 +94,30 @@ const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
             required
           />
         </div>
+        
         <div>
           <label className="mb-2 flex items-center text-zinc-600 dark:text-zinc-300">
             <Code className="mr-2" />
             Semester
           </label>
           <input
-            type="Number"
+            type="number"
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
-            placeholder="Enter course code"
+            placeholder="Enter the Semester"
             className="w-full p-2 border border-zinc-300 dark:border-zinc-600 rounded dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
-          className="w-full flex items-center justify-center py-2 px-4 rounded bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none"
+          className={`w-full flex items-center justify-center py-2 px-4 rounded ${
+            loading
+              ? 'bg-blue-400 dark:bg-blue-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600'
+          } text-white focus:outline-none`}
+          disabled={loading}
         >
           <Check className="mr-2" />
           Add Course

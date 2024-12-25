@@ -6,7 +6,8 @@ import { ModeToggle } from "@/components/mode-toggle"
 import { User } from "@/store/authStore";
 import { cn } from "@/lib/utils";
 export default function Header({ user, className }: {user:User|null, className?:string}) {
-  const isVerified = user?.isVerified;
+  // const isVerified = user?.isVerified;
+  const isVerified = user;
   return (
     <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm h-16">
       <div className={cn("container mx-auto px-4 py-3 h-16 flex justify-between items-center", className)}>

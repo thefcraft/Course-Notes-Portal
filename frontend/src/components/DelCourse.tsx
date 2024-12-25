@@ -1,6 +1,7 @@
 import  { useState } from 'react';
 import axios from 'axios';
-import { Trash } from 'lucide-react';  
+import { Trash, X } from 'lucide-react';  
+import toast from 'react-hot-toast';
 
 
 const DeleteCourse = (
@@ -9,7 +10,6 @@ const DeleteCourse = (
             closePopup: any;
             courses: any;
         }) => {
-
   const [deletePop, setDeletePop] = useState(false);  // Control visibility of delete popup
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);  // Track course to delete
   const [error, setError] = useState<string | null>(null);
@@ -23,11 +23,14 @@ const DeleteCourse = (
   const confirmDelete = async () => {
     try {
       await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/content/delete-course/${courseToDelete}`);
-      setDeletePop(false);  
-      closePopup(false)
-      setCourseToDelete(null);  
-    } catch {
-      setError('Failed to delete course');
+      toast.success("Course deleted successfully");
+      setDeletePop(false);
+      closePopup(false);
+      setCourseToDelete(null);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.error || "Failed to delete course. Please try again later.";
+      toast.error(errorMessage);
     }
   };
 
@@ -37,8 +40,10 @@ const DeleteCourse = (
 
   return (
     <div className="max-w-4xl mx-auto bg-white dark:bg-zinc-950 dark:bg-opacity-90 shadow-lg rounded-lg p-6">
+      <div className=" flex  justify-between items-center">
       <h2 className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">Courses</h2>
-
+      <X className="h-5 w-5" onClick={closePopup} />
+      </div>
       {error && <div className="text-red-500 text-xl text-center mt-8">{error}</div>}
 
       <ul className="space-y-4">

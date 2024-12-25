@@ -17,31 +17,35 @@ type Note = {
   fileName: string;
 };
 
-const ViewCourses = () => {
+const ViewCourses = (user: { user: any }) => {
   const { id } = useParams<{ id: string }>();
   const [notes, setNotes] = useState<Note[]>([]);
   const [courseName, setCourseName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [addNotesPop, setAddNotesPop] = useState(false);
-  const [delNotesPop, setDelNotesPop] = useState(false); 
-
+  const [delNotesPop, setDelNotesPop] = useState(false);
+  
+  const fetchNotes = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/content/course/${id}`);
+      setCourseName(response.data.courseName);
+      setNotes(response.data.notes);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to fetch notes');
+    }
+  };
   useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/content/course/${id}`);
-        setCourseName(response.data.courseName);
-        setNotes(response.data.notes);
-      } catch (err: any) {
-        setError(err.response?.data?.error || 'Failed to fetch notes');
-      }
-    };
-
     fetchNotes();
-  }, [id]);
+  }, []);
 
   if (error) {
     return <div className="text-red-500 text-xl text-center mt-8">{error}</div>;
   }
+
+  const isAuthorized = () => {
+    const role = user?.user?.role;
+    return role === "cr" || role === "admin";
+  };
 
   const handleAddNotes = () => {
     setAddNotesPop(true);
@@ -52,11 +56,13 @@ const ViewCourses = () => {
   };
 
   const closeAddNotesPopup = () => {
+    fetchNotes()
     setAddNotesPop(false);
   };
 
   const closeDelNotesPopup = () => {
-    setDelNotesPop(false); 
+    fetchNotes()
+    setDelNotesPop(false);
   };
 
   const menuItems = [
@@ -99,23 +105,32 @@ const ViewCourses = () => {
           ))}
         </tbody>
       </table>
-      <FABMenu items={menuItems} />
 
-      {addNotesPop && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="p-6 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto w-full">
-            <NotesUpload closePopup={closeAddNotesPopup} courseName={courseName} />
-          </div>
-        </div>
-      )}
+      {
+        isAuthorized() && (
+          <FABMenu items={menuItems} />
+        )
+      }
 
-      {delNotesPop && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="p-6 rounded-lg shadow-lg max-w-md w-full">
-            <DelNotes notes={notes} closePopup={closeDelNotesPopup} />
+      {
+        isAuthorized() &&
+        addNotesPop && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+            <div className="p-6 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto w-full">
+              <NotesUpload closePopup={closeAddNotesPopup} courseName={courseName} />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+      {
+        isAuthorized() &&
+        delNotesPop && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+            <div className="p-6 rounded-lg shadow-lg max-w-md w-full">
+              <DelNotes notes={notes} closePopup={closeDelNotesPopup} />
+            </div>
+          </div>
+        )}
     </div>
   );
 };

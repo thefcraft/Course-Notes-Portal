@@ -1,16 +1,18 @@
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { Upload, FileText, Tags, BookOpen, X } from 'lucide-react';
 
-const NotesUpload = ({ closePopup,courseName }: { 
-  closePopup: () => void ;
-  courseName:string;
+const NotesUpload = ({ closePopup, courseName }: {
+  closePopup: () => void;
+  courseName: string;
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [accessType, setAccessType] = useState('public');
-  const [course, setCourse] = useState('');
+  const [course, setCourse] = useState(courseName);
+  const [loading, setLoading] = useState(false);
+
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -21,38 +23,43 @@ const NotesUpload = ({ closePopup,courseName }: {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (!file) {
-      alert("Please upload a file");
+
+    if (!file || !title || !description) {
+      alert("Please fill all required fields: file, title, and description.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("file", file); 
+    formData.append("file", file);
     formData.append("title", title);
     formData.append("description", description);
     formData.append("tags", tags);
     formData.append("accessType", accessType);
-    formData.append("course", courseName?courseName:course);
-    console.log(formData)
+    formData.append("course", courseName ? courseName : course);
+
     try {
+
       const response = await fetch("http://localhost:5000/api/content/upload", {
         method: "POST",
         body: formData,
+        credentials: "include"
       });
 
       const data = await response.json();
 
       if (response.ok) {
         alert("File uploaded successfully!");
-        closePopup()
-        console.log(data); 
+        closePopup();
       } else {
         alert("Upload failed: " + data.error);
       }
     } catch (error) {
       console.error("Error uploading notes:", error);
       alert("Something went wrong while uploading the notes.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,12 +97,12 @@ const NotesUpload = ({ closePopup,courseName }: {
           </label>
           <input
             type="text"
-            value={courseName?courseName:course}
-            onChange={(e) => setCourse(courseName?courseName:e.target.value)}
+            value={courseName ? courseName : course}
+            onChange={(e) => setCourse(courseName ? courseName : e.target.value)}
             placeholder="Enter course name"
             className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white cursor-not-allowed"
             required
-            disabled={courseName}
+            disabled
           />
         </div>
 
@@ -136,6 +143,7 @@ const NotesUpload = ({ closePopup,courseName }: {
             placeholder="Enter a brief description of the notes"
             className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
             rows={4}
+            required
           />
         </div>
 
@@ -154,8 +162,13 @@ const NotesUpload = ({ closePopup,courseName }: {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors"
-        >
+          className={`w-full flex items-center justify-center py-2 px-4 rounded ${
+            loading
+              ? 'bg-blue-400 dark:bg-blue-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600'
+          } text-white focus:outline-none`}
+          disabled={loading}
+          >
           Upload Notes
         </button>
       </form>

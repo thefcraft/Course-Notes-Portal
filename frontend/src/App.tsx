@@ -16,6 +16,8 @@ import { AppSidebar } from "@/components/sidebar";
 import ViewCourse from "./components/viewCourse";
 import AllCourses from "./components/allCourses";
 import AddCourse from "./components/addCourse";
+import AllUsers from "./components/AllUsers";
+import { AdminRoute } from "./pages/auth/utils.auth";
 
 function App() {
   	const {isCheckingAuth, checkAuth, isAuthenticated, user} = useAuthStore(); 
@@ -60,18 +62,19 @@ function App() {
 				}/>
       		 	{/* Other Pages */}
       		 	<Route path="/*" element={<>
-					<AppSidebar />
+					<AppSidebar user={user} />
 					<div className="min-h-screen w-full z-0">
 						<Header user={user} className="pl-10"/>
 						<main className="overflow-x-hidden bg-background min-h-full h-full -mt-16 w-full pt-16">
 							<Routes>
 								<Route path="/" element={<>Home Page</>} />
 								<Route path="/dashboard" element={<Dashboard />} />
-			 		  			<Route path="/upload" element={<NotesUpload />}/>
+			 		  			{/* <Route path="/upload" element={<NotesUpload />}/> */}
 			 		  			<Route path="/view/:id" element={<ViewNotes />}/>
-			 		  			<Route path="/view-course/:id" element={<ViewCourse />}/>
-			 		  			<Route path="/all-courses" element={<AllCourses />}/>
-			 		  			<Route path="/add-course" element={<AddCourse />}/>
+			 		  			<Route path="/view-course/:id" element={<ViewCourse user={user} />}/>
+			 		  			<Route path="/all-courses" element={<AllCourses user={user} />}/>
+			 		  			{/* <Route path="/add-course" element={<AddCourse />}/> */}
+			 		  			<Route path="/users" element={<AdminRoute><AllUsers  /></AdminRoute>}/>
 								{/* 404 */}
 								<Route path="/*" element={<Error404Page/>}/>
 							</Routes>

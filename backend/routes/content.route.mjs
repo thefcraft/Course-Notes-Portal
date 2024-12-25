@@ -1,19 +1,21 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { addCourse, deleteCourse, deleteNotes, getAllCourses, getCourse, getNoteById, upload } from '../controllers/content.controller.mjs';
+import { verifyToken } from '../middleware/verifyToken.mjs';
+import { authorizeRole } from '../middleware/authorizeRoles.mjs';
 
 const contentRoute = express.Router();
 
 contentRoute.use(express.json()); 
 contentRoute.use(cookieParser()); 
 
-contentRoute.post('/add-course', addCourse);
-contentRoute.post('/upload', upload);
-contentRoute.get('/view/:id', getNoteById);
-contentRoute.get('/course/:id', getCourse);
-contentRoute.get('/all-courses', getAllCourses);
-contentRoute.delete('/delete-course/:id', deleteCourse);
-contentRoute.delete('/delete-note/:id', deleteNotes);
+contentRoute.post('/add-course',verifyToken,authorizeRole("cr") ,addCourse);
+contentRoute.post('/upload',verifyToken,authorizeRole("cr"), upload);
+contentRoute.get('/view/:id',verifyToken, getNoteById);
+contentRoute.get('/course/:id',verifyToken, getCourse);
+contentRoute.get('/all-courses',verifyToken, getAllCourses);
+contentRoute.delete('/delete-course/:id',verifyToken,authorizeRole("cr"), deleteCourse);
+contentRoute.delete('/delete-note/:id',verifyToken,authorizeRole("cr"), deleteNotes);
 
 
 export default contentRoute
