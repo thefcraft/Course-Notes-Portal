@@ -1,14 +1,13 @@
 import  { useState } from 'react';
 import axios from 'axios';
-import { Trash } from 'lucide-react';
-
-const DelNotes = ({
-  closePopup,
-  notes,
-}: {
+import { Trash, X } from 'lucide-react';
+import { API_URL } from '@/lib/constants';
+import { Content as Note } from '@/lib/types';
+interface DelNotesProps{
   closePopup: () => void;
-  notes: any[];
-}) => {
+  notes: Note[];
+}
+const DelNotes = ({closePopup, notes}: DelNotesProps) => {
   const [deletePop, setDeletePop] = useState(false); 
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +19,7 @@ const DelNotes = ({
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/content/delete-note/${noteToDelete}`);
+      await axios.delete(`${API_URL}/content/delete-note/${noteToDelete}`);
       setDeletePop(false);
       closePopup();
       setNoteToDelete(null); 
@@ -34,8 +33,16 @@ const DelNotes = ({
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white dark:bg-zinc-800 dark:bg-opacity-90 shadow-lg rounded-lg p-6">
-      <h2 className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">Delete Notes</h2>
+    <div className="relative max-w-md mx-auto bg-white dark:bg-black dark:bg-opacity-90 shadow-lg rounded-lg p-6 pt-4">
+      <div className='flex items-center mb-6 justify-between'>
+        <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400">Delete Notes</h2>
+        <button
+          onClick={closePopup}
+          className=" text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-500 focus:outline-none"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
 
       {error && <div className="text-red-500 text-xl text-center mt-8">{error}</div>}
 

@@ -1,33 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Sparkles, Trash2 } from 'lucide-react';
-import FABMenu from './FABmenu';
-import NotesUpload from './upload';
-import DelNotes from './DelNotes';
+import FABMenu from '@/components/FABMenu';
+import NotesUpload from '@/components/upload';
+import DelNotes from '@/components/DelNotes';
+import { Content as Note, User } from '@/lib/types';
+import { API_URL } from '@/lib/constants';
 
-type Note = {
-  _id: string;
-  title: string;
-  description: string;
-  tags: string[];
-  accessType: string;
-  course: string;
-  fileUrl: string;
-  fileName: string;
-};
-
-const ViewCourses = (user: { user: any }) => {
+const ViewCourses = (user: { user: User | null }) => {
   const { id } = useParams<{ id: string }>();
   const [notes, setNotes] = useState<Note[]>([]);
   const [courseName, setCourseName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [addNotesPop, setAddNotesPop] = useState(false);
   const [delNotesPop, setDelNotesPop] = useState(false);
+  const addNotesRef = useRef<HTMLDivElement | null>(null);
+  const delNotesRef = useRef<HTMLDivElement | null>(null);
   
   const fetchNotes = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/content/course/${id}`);
+      const response = await axios.get(`${API_URL}/content/course/${id}`);
       setCourseName(response.data.courseName);
       setNotes(response.data.notes);
     } catch (err: any) {
@@ -64,6 +57,14 @@ const ViewCourses = (user: { user: any }) => {
     fetchNotes()
     setDelNotesPop(false);
   };
+  const handleAutoCloseAddNote = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (addNotesRef.current && addNotesRef.current.contains(e.target as Node)) return;
+    closeAddNotesPopup();
+  }
+  const handleAutoCloseDelNote = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (delNotesRef.current && delNotesRef.current.contains(e.target as Node)) return;
+    closeDelNotesPopup();
+  }
 
   const menuItems = [
     {
@@ -115,8 +116,8 @@ const ViewCourses = (user: { user: any }) => {
       {
         isAuthorized() &&
         addNotesPop && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-            <div className="p-6 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto w-full">
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90 z-50" onClick={handleAutoCloseAddNote}>
+            <div className="max-h-[80vh] w-full max-w-2xl mx-2" ref={addNotesRef}>
               <NotesUpload closePopup={closeAddNotesPopup} courseName={courseName} />
             </div>
           </div>
@@ -125,8 +126,8 @@ const ViewCourses = (user: { user: any }) => {
       {
         isAuthorized() &&
         delNotesPop && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-            <div className="p-6 rounded-lg shadow-lg max-w-md w-full">
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90 z-50" onClick={handleAutoCloseDelNote}>
+            <div className="max-w-md w-full mx-2" ref={delNotesRef}>
               <DelNotes notes={notes} closePopup={closeDelNotesPopup} />
             </div>
           </div>

@@ -29,7 +29,7 @@ function App() {
   	console.log("isCheckingAuth", isCheckingAuth);	
 	return (
 	<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-		<SidebarProvider>
+		<div className="flex min-h-svh w-full">  {/* SIDEBAR IS REMOVED (Maybe add back in future) */} {/* <SidebarProvider> */}
         	<Routes>
 				{/* AUTH Pages */}
 				<Route path="/auth/*" element={
@@ -62,7 +62,7 @@ function App() {
 				}/>
       		 	{/* Other Pages */}
       		 	<Route path="/*" element={<>
-					<AppSidebar user={user} />
+					{/* <AppSidebar user={user} /> */}
 					<div className="min-h-screen w-full z-0">
 						<Header user={user} className="pl-10"/>
 						<main className="overflow-x-hidden bg-background min-h-full h-full -mt-16 w-full pt-16">
@@ -84,7 +84,7 @@ function App() {
 
         	</Routes>
 			<Toaster/>
-		</SidebarProvider>
+		</div> {/* </SidebarProvider> */}
 	</ThemeProvider>
 	);
 }

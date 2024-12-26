@@ -2,17 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FileText, BookOpen, Tags } from 'lucide-react';
-
-type Note = {
-  _id: string;
-  title: string;
-  description: string;
-  tags: string[];
-  accessType: string;
-  course: string;
-  fileUrl: string;
-  fileName: string;
-};
+import { API_URL } from '@/lib/constants';
+import { Content as Note } from '@/lib/types';
 
 const ViewNotes = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +13,7 @@ const ViewNotes = () => {
   useEffect(() => {
     const fetchNote = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/content/view/${id}`);
+        const response = await axios.get(`${API_URL}/content/view/${id}`);
         setNote(response.data.note);
       } catch (err: any) {
         setError(err.response?.data?.error || 'Failed to fetch the note');

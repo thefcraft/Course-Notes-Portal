@@ -1,6 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import { BookOpen, Code, Check, X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { API_URL } from '@/lib/constants';
 
 const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
   const [courseName, setCourseName] = useState('');
@@ -25,7 +26,7 @@ const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/content/add-course", {
+      const response = await fetch(`${API_URL}/content/add-course`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

@@ -66,5 +66,33 @@ export default {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), customScrollbar],
+}
+
+
+function customScrollbar({ addUtilities, addComponents, e, theme, config }) {
+  	addComponents({
+ 	  // .scrollbar: Base utility class for scrollbars
+	   [`.${e('scrollbar')}`]: {
+		'&::-webkit-scrollbar': {
+		  width: '0.5rem', // Equivalent to w-2
+		},
+		'&::-webkit-scrollbar-track': {
+		  backgroundColor: 'hsl(var(--muted))',
+		},
+		'&::-webkit-scrollbar-thumb': {
+		  backgroundColor: 'hsl(var(--muted-foreground))', 
+		},
+	  },
+
+	  // .scrollbar-rounded: For rounded corners (track and thumb)
+	  [`.${e('scrollbar-rounded')}`]: {
+		'&::-webkit-scrollbar-track': {
+		  borderRadius: '9999px', // Apply rounding to track
+		},
+		'&::-webkit-scrollbar-thumb': {
+		  borderRadius: '9999px', // Apply rounding to thumb
+		},
+	  },
+	});
 }

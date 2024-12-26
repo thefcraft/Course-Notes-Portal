@@ -1,18 +1,22 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, Trash2 } from "lucide-react"; // Example icons
-import FABMenu from "./FABmenu";
-import AddCourse from "./addCourse";
-import DelCourse from "./DelCourse";
+import FABMenu from '@/components/FABMenu';
+import AddCourse from '@/components/addCourse';
+import DelCourse from '@/components/DelCourse';
+import { API_URL } from "@/lib/constants";
+import { User, Course } from "@/lib/types";
 
-const AllCourses = ({ user }: { user: any }) => {
-  const [courses, setCourses] = useState<any[]>([]);
+const AllCourses = ({ user }: { user: User|null }) => {
+  const [courses, setCourses] = useState<Course[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const [fabOpen, setFabOpen] = useState(false);
   const [addCoursePop, setAddCoursePop] = useState(false);
   const [delCoursePop, setDelCoursePop] = useState(false);
+  const addCourseRef =  useRef<HTMLDivElement | null>(null);
+  const delCourseRef =  useRef<HTMLDivElement | null>(null);
 
   const isAuthorized = () => {
     const role = user?.role;
@@ -22,7 +26,7 @@ const AllCourses = ({ user }: { user: any }) => {
   const fetchCourses = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/content/all-courses`
+        `${API_URL}/content/all-courses`
       );
       setCourses(response.data.courses);
     } catch (err: any) {
@@ -51,6 +55,15 @@ const AllCourses = ({ user }: { user: any }) => {
     setFabOpen(false);
     setDelCoursePop(true);
   };
+
+  const handleAutoCloseAddCourse = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (addCourseRef.current && addCourseRef.current.contains(e.target as Node)) return;
+    closeAddCoursePopup();
+  }
+  const handleAutoCloseDelCourse = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (delCourseRef.current && delCourseRef.current.contains(e.target as Node)) return;
+    closeDelCoursePopup();
+  }
 
   const menuItems = [
     {
@@ -86,16 +99,16 @@ const AllCourses = ({ user }: { user: any }) => {
       )}
 
       {isAuthorized() && addCoursePop && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="p-6 rounded-lg shadow-lg max-w-md w-full bg-white dark:bg-zinc-800">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90 z-50" onClick={handleAutoCloseAddCourse}>
+          <div className="max-w-md w-full mx-2" ref={addCourseRef}>
             <AddCourse closePopup={closeAddCoursePopup} />
           </div>
         </div>
       )}
 
       {isAuthorized() && delCoursePop && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="p-6 rounded-lg shadow-lg max-w-md w-full bg-white dark:bg-zinc-800">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90 z-50" onClick={handleAutoCloseDelCourse}>
+          <div className="max-w-md w-full mx-2" ref={delCourseRef}>
             <DelCourse courses={courses} closePopup={closeDelCoursePopup} />
           </div>
         </div>

@@ -3,7 +3,7 @@ import { Icons } from "@/components/icons"
 import { Link } from 'react-router-dom';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { ModeToggle } from "@/components/mode-toggle"
-import { User } from "@/store/authStore";
+import { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 export default function Header({ user, className }: {user:User|null, className?:string}) {
   // const isVerified = user?.isVerified;
@@ -17,11 +17,13 @@ export default function Header({ user, className }: {user:User|null, className?:
         <nav className="hidden md:block">
             {isVerified?
                 <ul className="flex space-x-4">
-                    <li><Link to="/dashboard">Dashboard</Link></li>
+                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted"><Link to="/dashboard">Dashboard</Link></li>
+                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted"><Link to="/all-courses">Courses</Link></li>
                 </ul>
                 :
                 <ul className="flex space-x-4">
-                    <li><Link to="/about">About</Link></li>
+                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted"><Link to="/about">About</Link></li>
+                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted"><Link to="/all-courses">Courses</Link></li>
                 </ul>
             }
         </nav>
@@ -47,6 +49,7 @@ export default function Header({ user, className }: {user:User|null, className?:
                 {isVerified?
                   <>
                     <Link to="/dashboard">Dashboard</Link>
+                    <Link to="/all-courses">Courses</Link>
                     <Button asChild>
                       <Link to="/auth/logout">Logout</Link>
                     </Button>
@@ -54,6 +57,7 @@ export default function Header({ user, className }: {user:User|null, className?:
                   :
                   <>
                     <Link to="/about">About</Link>
+                    <Link to="/all-courses">Courses</Link>
                     <Button asChild>
                       <Link to="/auth/login">Login</Link>
                     </Button>

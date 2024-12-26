@@ -2,14 +2,14 @@ import  { useState } from 'react';
 import axios from 'axios';
 import { Trash, X } from 'lucide-react';  
 import toast from 'react-hot-toast';
+import { API_URL } from '@/lib/constants';
+import { Course } from '@/lib/types';
 
-
-const DeleteCourse = (
-    { closePopup, courses }:
-        {
-            closePopup: any;
-            courses: any;
-        }) => {
+interface DeleteCourseProps{
+  closePopup: () => void;
+  courses: Course[];
+}
+const DeleteCourse = ({ closePopup, courses }: DeleteCourseProps) => {
   const [deletePop, setDeletePop] = useState(false);  // Control visibility of delete popup
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);  // Track course to delete
   const [error, setError] = useState<string | null>(null);
@@ -22,10 +22,10 @@ const DeleteCourse = (
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/content/delete-course/${courseToDelete}`);
+      await axios.delete(`${API_URL}/content/delete-course/${courseToDelete}`);
       toast.success("Course deleted successfully");
       setDeletePop(false);
-      closePopup(false);
+      closePopup();
       setCourseToDelete(null);
     } catch (error: any) {
       const errorMessage =
@@ -39,10 +39,15 @@ const DeleteCourse = (
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white dark:bg-zinc-950 dark:bg-opacity-90 shadow-lg rounded-lg p-6">
-      <div className=" flex  justify-between items-center">
-      <h2 className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">Courses</h2>
-      <X className="h-5 w-5" onClick={closePopup} />
+    <div className="max-w-4xl mx-auto bg-white dark:bg-zinc-950 dark:bg-opacity-90 shadow-lg rounded-lg p-6 pt-4">
+      <div className=" flex  justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400">Courses</h2>
+        <button
+          onClick={closePopup}
+          className=" text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-500 focus:outline-none"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
       {error && <div className="text-red-500 text-xl text-center mt-8">{error}</div>}
 
@@ -61,7 +66,7 @@ const DeleteCourse = (
       </ul>
 
       {deletePop && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-95 z-50">
           <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-lg w-full max-w-md">
             <h3 className="text-xl text-center font-semibold text-gray-700 dark:text-gray-200 mb-4">
               Confirm Deletion

@@ -1,26 +1,28 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react"; 
-import FABMenu from "./FABmenu";
-import UpdateRole from "./UpdateRole";
+import FABMenu from '@/components/FABMenu';
+import UpdateRole from '@/components/UpdateRole';
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/authStore";
-
+import { API_URL } from "@/lib/constants";
+import { User } from "@/lib/types";
 const AllCourses = () => {
-        const { user } = useAuthStore();
-        console.log(user)
+    const { user } = useAuthStore();
+    console.log(user)
     
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
     const [fabOpen, setFabOpen] = useState(false);
     const [updateRolePop, setUpdateRolePop] = useState(false);
+    const updateRoleRef =  useRef<HTMLDivElement | null>(null);
 
     const fetchUsers = async () => {
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/users/get-users`
+                `${API_URL}/users/get-users`
             );
             setUsers(response.data.users);
         } catch (err: any) {
@@ -41,11 +43,17 @@ const AllCourses = () => {
         fetchUsers()
         setUpdateRolePop(false);
     };
+    
+    const handleAutoClosePopup = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (updateRoleRef.current && updateRoleRef.current.contains(e.target as Node)) return;
+      closePopup();
+    }
+
 
     const updateRole = async (userId: string, newRole: string) => {
     
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/updateRole`, {
+            const response = await fetch(`${API_URL}/users/updateRole`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json", 
@@ -96,10 +104,10 @@ const AllCourses = () => {
             <FABMenu items={menuItems} />
 
             {updateRolePop && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-950 bg-opacity-50 z-50">
-                    {/* <div className="p-2 rounded-lg shadow-lg max-w-md w-full bg-white dark:bg-zinc-900 dark:bg-opacity-95"> */}
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-950 bg-opacity-50 z-50" onClick={handleAutoClosePopup}>
+                    <div className="max-w-md w-full mx-2" ref={updateRoleRef}>
                         <UpdateRole users={users} updateRole={updateRole} closePopup={closePopup} />
-                    {/* </div> */}
+                    </div>
                 </div>
             )}
         </div>

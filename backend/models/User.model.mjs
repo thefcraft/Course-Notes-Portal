@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
     verificationExpiresAt: Date,
     role: {
         type:String,
+        enum: ['admin', 'user', 'cr'],
         default:"user"
     },
 }, {timestamps: true}); // created and updated fields are automatically added using timestamps: true
