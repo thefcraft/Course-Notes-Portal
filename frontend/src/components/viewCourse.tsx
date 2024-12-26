@@ -17,6 +17,7 @@ const ViewCourses = (user: { user: User | null }) => {
   const [delNotesPop, setDelNotesPop] = useState(false);
   const addNotesRef = useRef<HTMLDivElement | null>(null);
   const delNotesRef = useRef<HTMLDivElement | null>(null);
+  const [addNotesIsEmpty, setAddNotesIsEmpty] = useState<boolean>(true);
   
   const fetchNotes = async () => {
     try {
@@ -59,7 +60,9 @@ const ViewCourses = (user: { user: User | null }) => {
   };
   const handleAutoCloseAddNote = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (addNotesRef.current && addNotesRef.current.contains(e.target as Node)) return;
+    if (!addNotesIsEmpty) return;
     closeAddNotesPopup();
+    setAddNotesIsEmpty(true);
   }
   const handleAutoCloseDelNote = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (delNotesRef.current && delNotesRef.current.contains(e.target as Node)) return;
@@ -118,7 +121,7 @@ const ViewCourses = (user: { user: User | null }) => {
         addNotesPop && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90 z-50" onClick={handleAutoCloseAddNote}>
             <div className="max-h-[80vh] w-full max-w-2xl mx-2" ref={addNotesRef}>
-              <NotesUpload closePopup={closeAddNotesPopup} courseName={courseName} />
+              <NotesUpload closePopup={closeAddNotesPopup} courseName={courseName} setIsEmpty={setAddNotesIsEmpty} />
             </div>
           </div>
         )}

@@ -17,6 +17,7 @@ const AllCourses = ({ user }: { user: User|null }) => {
   const [delCoursePop, setDelCoursePop] = useState(false);
   const addCourseRef =  useRef<HTMLDivElement | null>(null);
   const delCourseRef =  useRef<HTMLDivElement | null>(null);
+  const [addCourseIsEmpty, setAddCourseIsEmpty] = useState<boolean>(true);
 
   const isAuthorized = () => {
     const role = user?.role;
@@ -58,7 +59,9 @@ const AllCourses = ({ user }: { user: User|null }) => {
 
   const handleAutoCloseAddCourse = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (addCourseRef.current && addCourseRef.current.contains(e.target as Node)) return;
+    if (!addCourseIsEmpty) return;
     closeAddCoursePopup();
+    setAddCourseIsEmpty(true);
   }
   const handleAutoCloseDelCourse = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (delCourseRef.current && delCourseRef.current.contains(e.target as Node)) return;
@@ -101,7 +104,7 @@ const AllCourses = ({ user }: { user: User|null }) => {
       {isAuthorized() && addCoursePop && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90 z-50" onClick={handleAutoCloseAddCourse}>
           <div className="max-w-md w-full mx-2" ref={addCourseRef}>
-            <AddCourse closePopup={closeAddCoursePopup} />
+            <AddCourse closePopup={closeAddCoursePopup} setIsEmpty={setAddCourseIsEmpty} />
           </div>
         </div>
       )}

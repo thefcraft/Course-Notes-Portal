@@ -3,10 +3,14 @@ import { BookOpen, Code, Check, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_URL } from '@/lib/constants';
 
-const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
-  const [courseName, setCourseName] = useState('');
-  const [courseCode, setCourseCode] = useState('');
-  const [semester, setSemester] = useState('');
+interface AddCourseProps{ 
+  closePopup: () => void, 
+  setIsEmpty: React.Dispatch<React.SetStateAction<boolean>> 
+}
+const AddCourse = ({ closePopup, setIsEmpty }: AddCourseProps) => {
+  const [courseName, setCourseName] = useState<string>('');
+  const [courseCode, setCourseCode] = useState<string>('');
+  const [semester, setSemester] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -74,7 +78,7 @@ const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
           <input
             type="text"
             value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
+            onChange={(e) => {setCourseName(e.target.value); setIsEmpty(e.target.value==='' && courseCode ==='' && semester === '')}}
             placeholder="Enter course name"
             className="w-full p-2 border border-zinc-300 dark:border-zinc-600 rounded dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
@@ -89,7 +93,7 @@ const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
           <input
             type="text"
             value={courseCode}
-            onChange={(e) => setCourseCode(e.target.value)}
+            onChange={(e) => {setCourseCode(e.target.value); setIsEmpty(courseName==='' && e.target.value ==='' && semester === '')}}
             placeholder="Enter course code"
             className="w-full p-2 border border-zinc-300 dark:border-zinc-600 rounded dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
@@ -104,7 +108,7 @@ const AddCourse = ({ closePopup }: { closePopup: () => void }) => {
           <input
             type="number"
             value={semester}
-            onChange={(e) => setSemester(e.target.value)}
+            onChange={(e) => {setSemester(e.target.value); setIsEmpty(courseName==='' && courseCode ==='' && e.target.value === '')}}
             placeholder="Enter the Semester"
             className="w-full p-2 border border-zinc-300 dark:border-zinc-600 rounded dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required

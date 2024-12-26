@@ -6,19 +6,20 @@ import { TagsInput } from "@/components/ui/tag-input";
 interface NotesUploadProps{ 
   closePopup: () => void ;
   courseName: string;
+  setIsEmpty: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NotesUpload = ({ closePopup,courseName }: NotesUploadProps) => {
+const NotesUpload = ({ closePopup,courseName, setIsEmpty }: NotesUploadProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [accessType, setAccessType] = useState('public');
-  const [course, setCourse] = useState(courseName);
   const [loading, setLoading] = useState(false);
 
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsEmpty(title==='' && tags.length === 0 && description==='' && e.target.files===null);
     if (e.target.files) {
       const uploadedFile = e.target.files[0];
       setFile(uploadedFile);
@@ -41,7 +42,7 @@ const NotesUpload = ({ closePopup,courseName }: NotesUploadProps) => {
     formData.append("description", description);
     formData.append("tags", tags.join(','));
     formData.append("accessType", accessType);
-    formData.append("course", courseName ? courseName : course);
+    formData.append("course", courseName);
 
     try {
 
@@ -102,8 +103,7 @@ const NotesUpload = ({ closePopup,courseName }: NotesUploadProps) => {
           </label>
           <input
             type="text"
-            value={courseName ? courseName : course}
-            onChange={(e) => setCourse(courseName ? courseName : e.target.value)}
+            value={courseName}
             placeholder="Enter course name"
             className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white cursor-not-allowed"
             required
@@ -119,7 +119,7 @@ const NotesUpload = ({ closePopup,courseName }: NotesUploadProps) => {
           <input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {setTitle(e.target.value); setIsEmpty(e.target.value==='' && tags.length === 0 && description==='' && file===null)}}
             placeholder="Enter notes title"
             className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
             required
@@ -133,7 +133,7 @@ const NotesUpload = ({ closePopup,courseName }: NotesUploadProps) => {
           </label>
           <TagsInput
             value={tags}
-            onValueChange={setTags}
+            onValueChange={(value: string[]) => {setTags(value); setIsEmpty(title==='' && value.length === 0 && description==='' && file===null)}}
             placeholder="Enter tag and press enter"
             className="w-full p-1 border rounded"
           />
@@ -148,7 +148,7 @@ const NotesUpload = ({ closePopup,courseName }: NotesUploadProps) => {
           <label className="block mb-2 text-zinc-600 dark:text-zinc-300">Description</label>
           <textarea
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {setDescription(e.target.value); setIsEmpty(title==='' && tags.length === 0 && e.target.value==='' && file===null)}}
             placeholder="Enter a brief description of the notes"
             className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white scrollbar"
             rows={4}
