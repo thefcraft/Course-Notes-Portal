@@ -1,12 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import { Sparkles, Trash2 } from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, Calendar, Clock, FileText, Sparkles, Trash2 } from 'lucide-react';
 import FABMenu from '@/components/FABMenu';
 import NotesUpload from '@/components/upload';
 import DelNotes from '@/components/DelNotes';
 import { Content as Note, User } from '@/lib/types';
 import { API_URL } from '@/lib/constants';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
+const dateFormater = (rawDate: string) => {
+    // Create a Date object from the raw string
+    const date = new Date(rawDate);
+    // Format the date using toLocaleString
+    const formattedDate = date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      // hour: '2-digit',
+      // minute: '2-digit',
+      // second: '2-digit',
+    });
+    return formattedDate;
+};
 
 const ViewCourses = (user: { user: User | null }) => {
   const { id } = useParams<{ id: string }>();
@@ -83,16 +100,22 @@ const ViewCourses = (user: { user: User | null }) => {
   ];
 
   return (
-    <div className="max-w-4xl mt-4 mx-auto bg-white dark:bg-zinc-900 dark:bg-opacity-30 shadow-lg dark:shadow-xl rounded-lg p-6">
+  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Link to="/all-courses" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-2 transition-colors duration-200">
+      <ArrowLeft className="mr-2 h-4 w-4" />
+      Back to Courses
+    </Link>
+    <div className="max-w-4xl mt-4 bg-white dark:bg-zinc-900 dark:bg-opacity-30 shadow-lg dark:shadow-xl rounded-lg p-6 border-t-2">
       <h2 className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">{courseName}</h2>
       <h3 className="text-2xl font-medium mb-6 text-gray-600 dark:text-gray-300">Course Notes</h3>
 
       <table className="min-w-full table-auto bg-white dark:bg-zinc-900 rounded-lg">
         <thead>
-          <tr className="bg-gray-100 dark:bg-zinc-800">
+          <tr className="bg-gray-200 dark:bg-zinc-800">
             <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">Title</th>
             <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">Description</th>
             <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">Tags</th>
+            <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">Date</th>
           </tr>
         </thead>
         <tbody>
@@ -105,6 +128,7 @@ const ViewCourses = (user: { user: User | null }) => {
               <td className="py-2 px-4 text-gray-800 dark:text-gray-200">{note.title}</td>
               <td className="py-2 px-4 max-w-[150px] text-gray-600 dark:text-gray-400 truncate">{note.description}</td>
               <td className="py-2 px-4 text-gray-600 dark:text-gray-400">{note.tags.join(', ')}</td>
+              <td className="py-2 px-4 text-gray-600 dark:text-gray-400">{dateFormater(note.uploadedAt)}</td>
             </tr>
           ))}
         </tbody>
@@ -136,6 +160,7 @@ const ViewCourses = (user: { user: User | null }) => {
           </div>
         )}
     </div>
+  </div>
   );
 };
 

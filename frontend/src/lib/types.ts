@@ -5,6 +5,9 @@ export interface User{
     name: string,
     isVerified: boolean,
     role: 'admin'|'user'|'cr',
+    branch: 'AI'|'CB'|'CE'|'CH'|'CM'|'CS'|'CT'|'EC'|'EE'|'ES'|'GT'|'HS'|'MA'|'MC'|'ME'|'MM'|'MT'|'PC'|'PH'|'PR'|'ST'|'VL',
+    semester: number,
+    enrolledCourses: string[], // [Course._id, ...]
     // more if needed
 }
 // export interface Note{ => changed to Content.model.mjs
@@ -24,11 +27,16 @@ export interface Content{
     fileUrl: string,
     fileName: string,
     // more if needed
+    
+    uploadedAt: string, // eg: "2024-12-25T09:02:30.955Z"
+    createdAt: string, // eg: "2024-12-25T09:02:30.956Z"
+    updatedAt: string, // eg: "2024-12-25T09:02:30.982Z"
 }
 export interface Course{
     _id: string,
     courseName: string,
     courseCode: string,
+    branch: ('AI'|'CB'|'CE'|'CH'|'CM'|'CS'|'CT'|'EC'|'EE'|'ES'|'GT'|'HS'|'MA'|'MC'|'ME'|'MM'|'MT'|'PC'|'PH'|'PR'|'ST'|'VL')[],
     semester: number,
     notes: string[], // [Content._id, ...]
 };

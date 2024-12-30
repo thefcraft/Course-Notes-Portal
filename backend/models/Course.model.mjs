@@ -11,6 +11,10 @@ const courseSchema = new mongoose.Schema({
     semester:{
         type:Number,
     },
+    branch: [{ // mutiple branch are allowed...
+        type: String, // see utils -> user.mjs
+        enum: ['AI', 'CB', 'CE', 'CH', 'CM', 'CS', 'CT', 'EC', 'EE', 'ES', 'GT', 'HS', 'MA', 'MC', 'ME', 'MM', 'MT', 'PC', 'PH', 'PR', 'ST', 'VL'],
+    }],
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Content'

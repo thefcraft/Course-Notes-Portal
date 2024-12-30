@@ -3,6 +3,7 @@ import bcryptjs from "bcryptjs";
 import User from "../models/User.model.mjs";
 import { generateTokenAndSetCookie } from "../utils/jwt.mjs";
 import { sendVerficationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from "../mailtrap/emails.mjs";
+import { User as UtilsUser } from '../utils/user.mjs';
 
 // TODO: Remove the verification code from the response in the production version...
 
@@ -13,6 +14,10 @@ export const signup = async (req, res) => {
         const hashedPassword = await bcryptjs.hash(password, 7) // TODO: salt must be random and stored in the database...
 		const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
         const userAlreadyExists = await User.findOne({ email }) // email is unique...
+        const utilsUser = new UtilsUser(email)
+        if(!utilsUser.isValid){
+            return res.status(400).json({success:false, message: "Invalid domain, must be iitp.ac.in"});
+        }
         if(userAlreadyExists && userAlreadyExists.isVerified){
             return res.status(400).json({success:false, message: "User already exists"});
         }

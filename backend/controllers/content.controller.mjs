@@ -74,7 +74,7 @@ export const upload = async (req, res) => {
       const accessType = Array.isArray(fields.accessType) ? fields.accessType[0] : fields.accessType;
       const courseName = Array.isArray(fields.course) ? fields.course[0] : fields.course;
 
-      const tagArray = Array.isArray(fields.tags) ? fields.tags : fields.tags ? fields.tags.split(',') : [];
+      const tagArray = Array.isArray(fields.tags) ? fields.tags : (fields.tags ? fields.tags.split(',') : []);
 
       const newContent = new Content({
         title,

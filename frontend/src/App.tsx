@@ -64,7 +64,7 @@ function App() {
       		 	<Route path="/*" element={<>
 					{/* <AppSidebar user={user} /> */}
 					<div className="min-h-screen w-full z-0">
-						<Header user={user} className="pl-10"/>
+						<Header user={user}/>
 						<main className="overflow-x-hidden bg-background min-h-full h-full -mt-16 w-full pt-16">
 							<Routes>
 								<Route path="/" element={<>Home Page</>} />

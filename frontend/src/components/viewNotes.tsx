@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FileText, BookOpen, Tags } from 'lucide-react';
+import { FileText, BookOpen, Tags, ArrowLeft } from 'lucide-react';
 import { API_URL } from '@/lib/constants';
 import { Content as Note } from '@/lib/types';
 
@@ -32,7 +32,12 @@ const ViewNotes = () => {
   }
 
   return (
-    <div className="max-w-2xl mt-4 mx-auto bg-white dark:bg-zinc-900 dark:bg-opacity-30  shadow-lg dark:shadow-xl rounded-lg p-6">
+  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Link to={`/view-course/${note.course}`} className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-2 transition-colors duration-200">
+      <ArrowLeft className="mr-2 h-4 w-4" />
+      Back to Notes
+    </Link>
+    <div className="max-w-4xl mt-4 bg-white dark:bg-zinc-900 dark:bg-opacity-30 shadow-lg dark:shadow-xl rounded-lg p-6 border-t-2">
       <h2 className="text-2xl font-bold mb-6 flex items-center text-blue-600 dark:text-blue-400">
         <BookOpen className="mr-3" />
         View Notes
@@ -61,6 +66,7 @@ const ViewNotes = () => {
         </a>
       </div>
     </div>
+  </div>
   );
 };
 
