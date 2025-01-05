@@ -108,6 +108,8 @@ const AddCourse = ({ closePopup, setIsEmpty }: AddCourseProps) => {
           <input
             type="number"
             value={semester}
+            min={1}
+            max={10}
             onChange={(e) => {setSemester(e.target.value); setIsEmpty(courseName==='' && courseCode ==='' && e.target.value === '')}}
             placeholder="Enter the Semester"
             className="w-full p-2 border border-zinc-300 dark:border-zinc-600 rounded dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"

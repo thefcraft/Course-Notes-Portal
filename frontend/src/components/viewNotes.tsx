@@ -58,7 +58,7 @@ const ViewNotes = () => {
         <p className="text-gray-600 dark:text-gray-300">{note.tags.join(', ')}</p>
       </div>
 
-      <div className="note-download mb-6 text-center">
+      <div className="note-download mb-2 mt-6 text-center">
         <a href={note.fileUrl} target="_blank" rel="noopener noreferrer" download={note.fileName}>
           <button className="bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition duration-300">
             Download {note.fileName}

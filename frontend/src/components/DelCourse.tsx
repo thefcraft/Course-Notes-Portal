@@ -63,6 +63,7 @@ const DeleteCourse = ({ closePopup, courses }: DeleteCourseProps) => {
             </button>
           </li>
         ))}
+        {courses.length === 0 && <div className='text-center py-3 bg-gray-50 dark:bg-zinc-900'>Add Course First</div>}
       </ul>
 
       {deletePop && (

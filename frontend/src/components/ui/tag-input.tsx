@@ -222,6 +222,14 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
               setInputValue("");
             }
             break;
+          
+          case ",":
+            if (inputValue.trim() !== "") {
+              e.preventDefault();
+              onValueChangeHandler(inputValue);
+              setInputValue("");
+            }
+            break;
         }
       },
       [activeIndex, value, inputValue, RemoveValue],

@@ -58,6 +58,7 @@ const DelNotes = ({closePopup, notes}: DelNotesProps) => {
             </button>
           </li>
         ))}
+        {notes.length === 0 && <div className='text-center py-3 bg-gray-50 dark:bg-zinc-900'>Add Notes First</div>}
       </ul>
 
       {deletePop && (

@@ -144,6 +144,14 @@ const AllCourses = ({ user }: { user: User|null }) => {
           {filteredCourses.map((course, index) => (
             <Course course={course} key={index}/>
           ))}
+          {filteredCourses.length === 0 && <div className="col-span-3 text-center p-6 bg-neutral-100 dark:bg-neutral-900 border rounded-lg">
+            <p className="text-xl font-semibold text-gray-600 dark:text-gray-400">No Courses Available</p>
+            {courses.length === 0?
+              <p className="text-gray-500">We don't have any courses at the moment. Please check back later.</p>  
+              :
+              <p className="text-gray-500">It seems there are no courses that match your filter. Please try adjusting your search criteria.</p>
+            }
+          </div>}
         </div>
 
         {isAuthorized() && (

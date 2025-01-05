@@ -134,7 +134,7 @@ const NotesUpload = ({ closePopup,courseName, setIsEmpty }: NotesUploadProps) =>
           <TagsInput
             value={tags}
             onValueChange={(value: string[]) => {setTags(value); setIsEmpty(title==='' && value.length === 0 && description==='' && file===null)}}
-            placeholder="Enter tag and press enter"
+            placeholder="Enter tags separated by comma"
             className="w-full p-1 border rounded"
           />
           {/* <input

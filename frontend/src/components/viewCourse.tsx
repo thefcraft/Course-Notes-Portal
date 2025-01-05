@@ -9,7 +9,7 @@ import { Content as Note, User } from '@/lib/types';
 import { API_URL } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
+import { Space } from '@/components/utils';
 const dateFormater = (rawDate: string) => {
     // Create a Date object from the raw string
     const date = new Date(rawDate);
@@ -28,6 +28,7 @@ const dateFormater = (rawDate: string) => {
 const ViewCourses = (user: { user: User | null }) => {
   const { id } = useParams<{ id: string }>();
   const [notes, setNotes] = useState<Note[]>([]);
+  const [sortedNotes, setSortedNotes] = useState<Note[]>([]);
   const [courseName, setCourseName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [addNotesPop, setAddNotesPop] = useState(false);
@@ -35,12 +36,56 @@ const ViewCourses = (user: { user: User | null }) => {
   const addNotesRef = useRef<HTMLDivElement | null>(null);
   const delNotesRef = useRef<HTMLDivElement | null>(null);
   const [addNotesIsEmpty, setAddNotesIsEmpty] = useState<boolean>(true);
+
+  const [sortConfig, setSortConfig] = useState<{
+    key: "title" | "description" | "tags" | "date";
+    direction: "ascending" | "descending";
+  }>({
+    key: 'date',
+    direction: 'descending',
+  });
+
+  // Function to handle sorting
+  const handleSort = (column: "title" | "description" | "tags" | "date", _notes?:Note[]) => {
+    const newDirection = sortConfig.key === column && sortConfig.direction === 'ascending' ? 'descending' : 'ascending';
+    setSortConfig({ key: column, direction: newDirection });
+    // Sorting function
+    setSortedNotes([...(_notes?_notes:notes)].sort((a, b) => {
+      let aValue = '';
+      let bValue = '';
+      if (column === 'date') {
+        aValue = a.createdAt;
+        bValue = b.createdAt;
+      }else if(column === 'title'){
+        aValue = a.title;
+        bValue = b.title;
+      }
+      else if(column === 'description'){
+        aValue = a.description;
+        bValue = b.description;
+      }
+      else if(column === 'tags'){
+        aValue = a.tags.join(',');
+        bValue = b.tags.join(',');
+      }
+
+      // Sort based on the direction (ascending or descending)
+      if (aValue < bValue) {
+        return newDirection === 'ascending' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return newDirection === 'ascending' ? 1 : -1;
+      }
+      return 0;
+    }));
+  };
   
   const fetchNotes = async () => {
     try {
       const response = await axios.get(`${API_URL}/content/course/${id}`);
       setCourseName(response.data.courseName);
       setNotes(response.data.notes);
+      handleSort("date", response.data.notes);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to fetch notes');
     }
@@ -108,18 +153,26 @@ const ViewCourses = (user: { user: User | null }) => {
     <div className="max-w-4xl mt-4 bg-white dark:bg-zinc-900 dark:bg-opacity-30 shadow-lg dark:shadow-xl rounded-lg p-6 border-t-2">
       <h2 className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">{courseName}</h2>
       <h3 className="text-2xl font-medium mb-6 text-gray-600 dark:text-gray-300">Course Notes</h3>
-
+      <div className='w-full overflow-x-auto scrollbar scrollbar-rounded pb-1'>
       <table className="min-w-full table-auto bg-white dark:bg-zinc-900 rounded-lg">
         <thead>
           <tr className="bg-gray-200 dark:bg-zinc-800">
-            <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">Title</th>
-            <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">Description</th>
-            <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">Tags</th>
-            <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">Date</th>
+            <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">
+              <pre className="cursor-pointer select-none" onClick={() => handleSort('title')}>Title<Space/>{sortConfig.key === 'title'?(sortConfig.direction === 'ascending' ? '↑' : '↓'):<Space/>}</pre> 
+            </th>
+            <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">
+              <pre className="cursor-pointer select-none" onClick={() => handleSort('description')}>Description<Space/>{sortConfig.key === 'description'?(sortConfig.direction === 'ascending' ? '↑' : '↓'):<Space/>}</pre>
+            </th>
+            <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">
+              <pre className="cursor-pointer select-none" onClick={() => handleSort('tags')}>Tags<Space/>{sortConfig.key === 'tags'?(sortConfig.direction === 'ascending' ? '↑' : '↓'):<Space/>}</pre>
+            </th>
+            <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">
+              <pre className="cursor-pointer select-none" onClick={() => handleSort('date')}>Date<Space/>{sortConfig.key === 'date'?(sortConfig.direction === 'ascending' ? '↑' : '↓'):<Space/>}</pre>
+            </th>
           </tr>
         </thead>
         <tbody>
-          {notes.map((note) => (
+          {sortedNotes.map((note) => (
             <tr
               key={note._id}
               className="cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700"
@@ -133,7 +186,8 @@ const ViewCourses = (user: { user: User | null }) => {
           ))}
         </tbody>
       </table>
-
+      </div>
+      {notes.length === 0 && <div className='text-center mt-3 px-1 py-3 bg-gray-50 dark:bg-zinc-900 min-w-full'>We don't have any notes at the moment.<br/>Please check back later.</div>}
       {
         isAuthorized() && (
           <FABMenu items={menuItems} />

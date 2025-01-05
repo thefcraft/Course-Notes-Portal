@@ -76,6 +76,7 @@ function customScrollbar({ addUtilities, addComponents, e, theme, config }) {
 	   [`.${e('scrollbar')}`]: {
 		'&::-webkit-scrollbar': {
 		  width: '0.5rem', // Equivalent to w-2
+		  height: '0.5rem'
 		},
 		'&::-webkit-scrollbar-track': {
 		  backgroundColor: 'hsl(var(--muted))',

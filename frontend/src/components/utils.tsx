@@ -2,7 +2,8 @@
 import { Icons } from "@/components/icons"
 
 export const Space = () => {
-    return <>{" "}</>
+    // return <>{" "}</>
+    return <>&nbsp;</>
 };
 
 export function Loading() {
