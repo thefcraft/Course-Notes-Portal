@@ -12,7 +12,7 @@ export const mailtrapClient = new MailtrapClient({
 
 export const sender = {
   email: "no-reply@thefcraft.site",
-  name: "ThefCraft's Team",
+  name: "College Notes's Team",
 };
 // const recipients = [
 //   {

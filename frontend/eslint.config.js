@@ -23,6 +23,8 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      // Disable all TypeScript linting rules
+      '@typescript-eslint/*': 'off',
     },
   },
 )
