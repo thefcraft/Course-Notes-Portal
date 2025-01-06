@@ -2,10 +2,11 @@
   "name": "notes-share-portal",
   "version": "1.0.0",
   "description": "",
-  "main": "backend/index.mjs",
+  "main": "backend/index.js",
   "scripts": {
-    "dev": "nodemon backend/index.mjs"
+    "dev": "nodemon backend/index.js"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
