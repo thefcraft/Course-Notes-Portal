@@ -1,9 +1,9 @@
 import crypto from "crypto";
 import bcryptjs from "bcryptjs";
-import User from "../models/User.model.mjs";
+import User, {safeUserCredential} from "../models/User.model.mjs";
 import { generateTokenAndSetCookie } from "../utils/jwt.mjs";
 import { sendVerficationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from "../mailtrap/emails.mjs";
-import { User as UtilsUser } from '../utils/user.mjs';
+import { UtilsUser as UtilsUser } from '../utils/user.mjs';
 
 // TODO: Remove the verification code from the response in the production version...
 
@@ -53,10 +53,7 @@ export const signup = async (req, res) => {
 		res.status(201).json({
 			success: true,
 			message: "User created successfully",
-			user: { // TODO: verificationToken is not need to send in tha api
-				...user._doc,
-				password: undefined,
-			},
+			user: safeUserCredential(user),
 		});
 
     }catch(error){
@@ -86,10 +83,7 @@ export const verifyEmail = async (req, res) => {
         return res.status(200).json({
             success:true, 
             message: "user is verified",
-            user: {
-				...user._doc,
-				password: undefined,
-			},
+            user: safeUserCredential(user),
         });   
     }catch(error){
         console.log("error in verify email", error);
@@ -115,10 +109,7 @@ export const login = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Logged in successfully",
-            user: {
-                ...user._doc,
-                password: undefined,
-            },
+            user: safeUserCredential(user),
         });
     }catch(error){
         console.log("error in login", error);
@@ -202,10 +193,7 @@ export const checkAuth = async (req, res) => {
         }
         res.status(200).json({
             success: true,
-            user: {
-                ...user._doc,
-                password: undefined,
-            },
+            user: safeUserCredential(user),
         });
     }catch (error){
         console.log("error in checkAuth", error);
@@ -239,10 +227,7 @@ export const resendOtp = async (req, res) => {
 		res.status(201).json({
 			success: true,
 			message: "User created successfully",
-			user: { // TODO: verificationToken is not need to send in tha api
-				...user._doc,
-				password: undefined,
-			},
+			user: safeUserCredential(user),
 		});
 
     }catch(error){

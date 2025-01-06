@@ -2,8 +2,8 @@ import formidable from 'formidable';
 import cloudinary from 'cloudinary';
 import Content from '../models/Content.model.mjs';
 import Course from '../models/Course.model.mjs';
-import User from '../models/User.model.mjs';
-import { User as UtilsUser } from '../utils/user.mjs';
+import User, {safeUserCredential} from '../models/User.model.mjs';
+import { UtilsUser as UtilsUser } from '../utils/user.mjs';
 
 // TODO: handle the accessType and also check cr's branch so that cr can't update other branch's data
 // TODO: handle other branch's user can't enroll etc
@@ -183,7 +183,7 @@ export const enrollCourse = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.status(200).json({ success: true, user: updatedUser });
+    res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -211,7 +211,7 @@ export const unenrollCourse = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.status(200).json({ success: true, user: updatedUser });
+    res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }

@@ -12,7 +12,7 @@ class Email {
     }
 }
 
-export class User {
+export class UtilsUser {
     constructor(email) {
       this.email = new Email(email);
       const username = this.email.username;

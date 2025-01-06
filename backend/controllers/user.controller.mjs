@@ -1,10 +1,10 @@
-import User from '../models/User.model.mjs'
+import User, { safeUserCredential } from '../models/User.model.mjs'
 export const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
-    res.status(200).json({ success: true, user });
+    res.status(200).json({ success: true, user: safeUserCredential(user) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error', error });
   }
@@ -14,7 +14,7 @@ export const updateUserProfile = async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(req.userId, req.body, { new: true });
     if (!updatedUser) return res.status(404).json({ success: false, message: 'User not found' });
-    res.status(200).json({ success: true, user: updatedUser });
+    res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error', error });
   }
@@ -36,7 +36,7 @@ export const updateUserRole = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
-    res.status(200).json({ success: true, user: updatedUser });
+    res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
   } catch (error) {
     console.error('Error updating user role:', error);
     res.status(500).json({ success: false, message: 'Server error', error });
@@ -48,7 +48,7 @@ export const getPublicProfile = async (req, res) => {
   try {
     const user = await User.findById(req.params.user_id).select('name email profilePicture');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    res.status(200).json({ success: true, user });
+    res.status(200).json({ success: true, user: safeUserCredential(user) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error', error });
   }
@@ -66,7 +66,7 @@ export const getAllUsers = async (req, res) => {
     }
     res.status(200).json({
       success: true,
-      users: users
+      users: users.map(safeUserCredential)
     });
   } catch (error) {
     console.error("Error fetching users:", error);

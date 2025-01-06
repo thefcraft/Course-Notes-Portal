@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { NODE_ENV } from "../utils/constants.mjs";
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -48,5 +49,22 @@ const userSchema = new mongoose.Schema({
 
 
 const User = mongoose.model('User', userSchema);
+
+export function safeUserCredential(user){
+    if(NODE_ENV === "development"){
+        return{
+            ...user._doc,
+            password: undefined
+        }   
+    }
+    return {
+        ...user._doc,
+        password: undefined,
+        resetPasswordToken: undefined,
+        resetPasswordExpiresAt: undefined,
+        verificationToken: undefined,
+        verificationExpiresAt: undefined,
+    }
+}
 
 export default User;

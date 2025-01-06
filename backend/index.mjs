@@ -10,12 +10,13 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.route.mjs';
 import userRoutes from './routes/user.routes.mjs';
 import notesRoutes from './routes/notes.routes.mjs';
+import { BACKEND_PORT, CLOUD_API_KEY, CLOUD_NAME, CLOUD_SECRET_KEY } from './utils/constants.mjs';
 
 
 
 
 dotenv.config()
-const PORT = process.env.BACKEND_PORT || 5000;
+const PORT = BACKEND_PORT;
 const app = express();
 
 
@@ -29,9 +30,9 @@ app.use(cors({
 
 //cloudinary config
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUD_API_KEY,
-    api_secret: process.env.CLOUD_SECRET_KEY,
+    cloud_name: CLOUD_NAME,
+    api_key: CLOUD_API_KEY,
+    api_secret: CLOUD_SECRET_KEY,
     secure: true,
 })
 
