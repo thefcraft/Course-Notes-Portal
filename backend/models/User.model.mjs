@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     enrolledCourses: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Content'
+        ref: 'Course'
     }],
     resetPasswordToken: String, // equivalent to {type: String}
     resetPasswordExpiresAt: Date,

@@ -1,11 +1,13 @@
 // see in the backend/models
+export type Branch = 'AI'|'CB'|'CE'|'CH'|'CM'|'CS'|'CT'|'EC'|'EE'|'ES'|'GT'|'HS'|'MA'|'MC'|'ME'|'MM'|'MT'|'PC'|'PH'|'PR'|'ST'|'VL';
+export const branches: Branch[] = ['AI','CB','CE','CH','CM','CS','CT','EC','EE','ES','GT','HS','MA','MC','ME','MM','MT','PC','PH','PR','ST','VL'];
 export interface User{
     _id: string,
     email: string,
     name: string,
     isVerified: boolean,
     role: 'admin'|'user'|'cr',
-    branch: 'AI'|'CB'|'CE'|'CH'|'CM'|'CS'|'CT'|'EC'|'EE'|'ES'|'GT'|'HS'|'MA'|'MC'|'ME'|'MM'|'MT'|'PC'|'PH'|'PR'|'ST'|'VL',
+    branch: Branch,
     semester: number,
     enrolledCourses: string[], // [Course._id, ...]
     // more if needed
@@ -36,7 +38,8 @@ export interface Course{
     _id: string,
     courseName: string,
     courseCode: string,
-    branch: ('AI'|'CB'|'CE'|'CH'|'CM'|'CS'|'CT'|'EC'|'EE'|'ES'|'GT'|'HS'|'MA'|'MC'|'ME'|'MM'|'MT'|'PC'|'PH'|'PR'|'ST'|'VL')[],
+    description: string,
     semester: number,
+    branch: Branch[],
     notes: string[], // [Content._id, ...]
 };

@@ -20,13 +20,24 @@ export default function Header({ user, className }: {user:User|null, className?:
         <nav className="hidden md:block">
             {isVerified?
                 <ul className="flex space-x-4">
-                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted"><Link to="/dashboard">Dashboard</Link></li>
-                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted"><Link to="/all-courses">Courses</Link></li>
+                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted">
+                      <Link to="/dashboard">Dashboard</Link>
+                    </li>
+                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted">
+                      <Link to="/all-courses">Courses</Link>
+                    </li>
+                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted">
+                      <Link to="/profile">Profile</Link>
+                    </li>
                 </ul>
                 :
                 <ul className="flex space-x-4">
-                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted"><Link to="/about">About</Link></li>
-                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted"><Link to="/all-courses">Courses</Link></li>
+                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="border-transparent border-b-2 hover:text-muted-foreground hover:border-muted">
+                      <Link to="/all-courses">Courses</Link>
+                    </li>
                 </ul>
             }
         </nav>
@@ -53,13 +64,14 @@ export default function Header({ user, className }: {user:User|null, className?:
                   <>
                     <Link to="/dashboard">Dashboard</Link>
                     <Link to="/all-courses">Courses</Link>
+                    <Link to="/profile">Profile</Link>
                     <Button asChild>
                       <Link to="/auth/logout">Logout</Link>
                     </Button>
                   </>
                   :
                   <>
-                    <Link to="/about">About</Link>
+                    <Link to="/">Home</Link>
                     <Link to="/all-courses">Courses</Link>
                     <Button asChild>
                       <Link to="/auth/login">Login</Link>

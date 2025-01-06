@@ -11,6 +11,7 @@ import Course from '@/components/course';
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { Loading } from "@/components/utils";
 
 const AllCourses = ({ user }: { user: User|null }) => {
   const [courses, setCourses] = useState<TypeCourse[]>([]);
@@ -25,21 +26,20 @@ const AllCourses = ({ user }: { user: User|null }) => {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [showEligibleOnly, setShowEligibleOnly] = useState(false)
+
+  if (user === null) return <Loading/>;
   
   const filteredCourses = courses.filter(course => 
     (
       course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.courseCode.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  
-    // (course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    // course.courseName.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    // (!showEligibleOnly || (user.semester >= course.semester && (user.branch === course.branch || course.branch === 'All')))
+    ) && 
+    (!showEligibleOnly || (user.semester == course.semester && (course.branch.includes(user.branch) || course.branch.length === 0 )))
   )
 
 
   const isAuthorized = () => {
-    const role = user?.role;
+    const role = user.role;
     return role === "cr" || role === "admin";
   };
 

@@ -29,6 +29,8 @@ export const signup = async (req, res) => {
                 email,
                 password: hashedPassword,
                 name,
+                branch:utilsUser.branch, // NOTE: each sem we have to run a script to update this in database...
+                semester:utilsUser.semester, // NOTE: each sem we have to run a script to update this in database...
                 verificationToken,
                 verificationExpiresAt: Date.now() + 30 * 60 * 1000, // 30 minutes
             });

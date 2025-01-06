@@ -2,6 +2,38 @@ import React, { useState, FormEvent } from 'react';
 import { BookOpen, Code, Check, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_URL } from '@/lib/constants';
+import { Branch } from '@/lib/types';
+import MultipleSelector, { Option as OptionBase } from '@/components/ui/multiple-selector';
+
+interface Option extends OptionBase {
+  value: Branch;
+  label: Branch;
+}
+
+const OPTIONS: Option[] = [
+  { label: 'AI', value: 'AI' },
+  { label: 'CB', value: 'CB' },
+  { label: 'CE', value: 'CE' },
+  { label: 'CH', value: 'CH' },
+  { label: 'CM', value: 'CM' },
+  { label: 'CS', value: 'CS' },
+  { label: 'CT', value: 'CT' },
+  { label: 'EC', value: 'EC' },
+  { label: 'EE', value: 'EE' },
+  { label: 'ES', value: 'ES' },
+  { label: 'GT', value: 'GT' },
+  { label: 'HS', value: 'HS' },
+  { label: 'MA', value: 'MA' },
+  { label: 'MC', value: 'MC' },
+  { label: 'ME', value: 'ME' },
+  { label: 'MM', value: 'MM' },
+  { label: 'MT', value: 'MT' },
+  { label: 'PC', value: 'PC' },
+  { label: 'PH', value: 'PH' },
+  { label: 'PR', value: 'PR' },
+  { label: 'ST', value: 'ST' },
+  { label: 'VL', value: 'VL' }
+];
 
 interface AddCourseProps{ 
   closePopup: () => void, 
@@ -12,6 +44,8 @@ const AddCourse = ({ closePopup, setIsEmpty }: AddCourseProps) => {
   const [courseCode, setCourseCode] = useState<string>('');
   const [semester, setSemester] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [description, setDescription] = useState('');
+  const [branches, setBranches] = useState<OptionBase[]>([]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,7 +69,7 @@ const AddCourse = ({ closePopup, setIsEmpty }: AddCourseProps) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ courseName, courseCode, semester }),
+        body: JSON.stringify({ courseName, courseCode, semester, description, branches: branches.map((branch) => branch.value) }),
         credentials:'include'
       });
 
@@ -78,9 +112,21 @@ const AddCourse = ({ closePopup, setIsEmpty }: AddCourseProps) => {
           <input
             type="text"
             value={courseName}
-            onChange={(e) => {setCourseName(e.target.value); setIsEmpty(e.target.value==='' && courseCode ==='' && semester === '')}}
+            onChange={(e) => {setCourseName(e.target.value); setIsEmpty(e.target.value==='' && description ==='' && courseCode ==='' && semester === '')}}
             placeholder="Enter course name"
             className="w-full p-2 border border-zinc-300 dark:border-zinc-600 rounded dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block mb-2 text-zinc-600 dark:text-zinc-300">Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => {setDescription(e.target.value); setIsEmpty(courseName==='' && e.target.value==='' && courseCode ==='' && semester === '')}}
+            placeholder="Enter a brief description of the course"
+            className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white scrollbar"
+            rows={4}
             required
           />
         </div>
@@ -93,7 +139,7 @@ const AddCourse = ({ closePopup, setIsEmpty }: AddCourseProps) => {
           <input
             type="text"
             value={courseCode}
-            onChange={(e) => {setCourseCode(e.target.value); setIsEmpty(courseName==='' && e.target.value ==='' && semester === '')}}
+            onChange={(e) => {setCourseCode(e.target.value); setIsEmpty(courseName==='' && description ==='' && e.target.value ==='' && semester === '')}}
             placeholder="Enter course code"
             className="w-full p-2 border border-zinc-300 dark:border-zinc-600 rounded dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
@@ -110,10 +156,28 @@ const AddCourse = ({ closePopup, setIsEmpty }: AddCourseProps) => {
             value={semester}
             min={1}
             max={10}
-            onChange={(e) => {setSemester(e.target.value); setIsEmpty(courseName==='' && courseCode ==='' && e.target.value === '')}}
+            onChange={(e) => {setSemester(e.target.value); setIsEmpty(courseName==='' && description ==='' && courseCode ==='' && e.target.value === '')}}
             placeholder="Enter the Semester"
             className="w-full p-2 border border-zinc-300 dark:border-zinc-600 rounded dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+          />
+        </div>
+
+        <div className="w-full">
+          <label className="mb-2 flex items-center text-zinc-600 dark:text-zinc-300">
+            <Code className="mr-2" />
+            Branch
+          </label>
+          <MultipleSelector
+            value={branches}
+            onChange={setBranches}
+            defaultOptions={OPTIONS}
+            placeholder="Select Branch you like..."
+            emptyIndicator={
+              <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                no results found.
+              </p>
+            }
           />
         </div>
 

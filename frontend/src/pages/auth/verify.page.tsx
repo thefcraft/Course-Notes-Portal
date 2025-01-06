@@ -9,23 +9,20 @@ import { Label } from "@/components/ui/label"
 import { Icons } from "@/components/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuthStore } from '@/store/authStore'
+import { User } from '@/lib/types';
 const OTP_LENGTH = 6
 
-export default function EmailVerificationPage() {
+export default function EmailVerificationPage({user}: {user: User | null}) {
   const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(''))
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const navigate = useNavigate();
   
-  const { isCheckingAuth, checkAuth, isAuthenticated, user, verifyEmail, error, isLoading, resendOtp } = useAuthStore();
+  const { verifyEmail, error, isLoading, resendOtp } = useAuthStore();
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const email = queryParams.get('email');
-  
-  useEffect(()=>{
-    checkAuth();
-  }, [checkAuth]);
+  const email = user?user.email:queryParams.get('email');
   
   useEffect(() => {
     if (inputRefs.current[0]) {
@@ -34,8 +31,7 @@ export default function EmailVerificationPage() {
   }, [])
   if (!email) return <Navigate to='/login' replace />;
 
-  if (!isCheckingAuth && !user) return <Navigate to='/signup' replace />;
-  if (!isCheckingAuth && user?.isVerified) return <Navigate to='/' replace />;
+  if (user && user.isVerified) return <Navigate to='/' replace />;
 
   const handleChange = (element: HTMLInputElement, index: number) => {
     if (isNaN(Number(element.value))) return false

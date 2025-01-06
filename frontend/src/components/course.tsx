@@ -16,7 +16,7 @@ export default function Course({course}: {course: TypeCourse}){
         <BookOpen className="h-5 w-5 text-blue-500" />
       </div>  
       <h3 className="text-xl font-medium mb-2 text-gray-800 dark:text-gray-200 line-clamp-1">{course.courseName}</h3>
-      <p className="text-neutral-600 dark:text-neutral-400 flex-grow line-clamp-2">course.description Fundamental concepts of programming and computer systems</p>
+      <p className="text-neutral-600 dark:text-neutral-400 flex-grow line-clamp-2">{course.description || <span className='font-light'>No description</span>}</p>
       <div className="mt-4">
         <p className="text-sm text-neutral-800 dark:text-neutral-200 ">Semester: {course.semester}</p>
         <p className="text-sm text-neutral-800 dark:text-neutral-200 ">Branch: {course.branch.length === 0?'All':course.branch.join(', ')}</p>

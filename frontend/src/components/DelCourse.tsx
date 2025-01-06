@@ -4,6 +4,7 @@ import { Trash, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_URL } from '@/lib/constants';
 import { Course } from '@/lib/types';
+import AskConfirmation from '@/components/ask-confirmation';
 
 interface DeleteCourseProps{
   closePopup: () => void;
@@ -66,32 +67,11 @@ const DeleteCourse = ({ closePopup, courses }: DeleteCourseProps) => {
         {courses.length === 0 && <div className='text-center py-3 bg-gray-50 dark:bg-zinc-900'>Add Course First</div>}
       </ul>
 
-      {deletePop && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-95 z-50">
-          <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-lg w-full max-w-md">
-            <h3 className="text-xl text-center font-semibold text-gray-700 dark:text-gray-200 mb-4">
-              Confirm Deletion
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Are you sure you want to delete this course? This action cannot be undone.
-            </p>
-            <div className="flex justify-between">
-              <button
-                onClick={cancelDelete}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {deletePop && <AskConfirmation variant='destructive'
+        title="Confirm Deletion"
+        description="Are you sure you want to delete this course? This action cannot be undone."
+        onClickCancel={cancelDelete} onClickConfirm={confirmDelete}/>}
+
     </div>
   );
 };

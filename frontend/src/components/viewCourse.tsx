@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, FileText, Sparkles, Trash2 } from 'lucide-react';
 import FABMenu from '@/components/FABMenu';
 import NotesUpload from '@/components/upload';
 import DelNotes from '@/components/DelNotes';
-import { Content as Note, User } from '@/lib/types';
+import { Content as Note, User, Course as TypeCourse  } from '@/lib/types';
 import { API_URL } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Space } from '@/components/utils';
+import { Loading, Space } from '@/components/utils';
+import { cn } from '@/lib/utils';
+import AskConfirmation from '@/components/ask-confirmation';
 const dateFormater = (rawDate: string) => {
     // Create a Date object from the raw string
     const date = new Date(rawDate);
@@ -25,18 +27,22 @@ const dateFormater = (rawDate: string) => {
     return formattedDate;
 };
 
-const ViewCourses = (user: { user: User | null }) => {
+const ViewCourses = ({user}: { user: User | null }) => {
   const { id } = useParams<{ id: string }>();
   const [notes, setNotes] = useState<Note[]>([]);
+  const [course, setCourse] = useState<TypeCourse | null>(null);
   const [sortedNotes, setSortedNotes] = useState<Note[]>([]);
-  const [courseName, setCourseName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [addNotesPop, setAddNotesPop] = useState(false);
   const [delNotesPop, setDelNotesPop] = useState(false);
   const addNotesRef = useRef<HTMLDivElement | null>(null);
   const delNotesRef = useRef<HTMLDivElement | null>(null);
   const [addNotesIsEmpty, setAddNotesIsEmpty] = useState<boolean>(true);
+  const [enrollPop, setEnrollPop] = useState(false); 
+  const [unenrollPop, setUnenrollPop] = useState(false); 
 
+  const navigate = useNavigate();
+  
   const [sortConfig, setSortConfig] = useState<{
     key: "title" | "description" | "tags" | "date";
     direction: "ascending" | "descending";
@@ -83,7 +89,7 @@ const ViewCourses = (user: { user: User | null }) => {
   const fetchNotes = async () => {
     try {
       const response = await axios.get(`${API_URL}/content/course/${id}`);
-      setCourseName(response.data.courseName);
+      setCourse(response.data);
       setNotes(response.data.notes);
       handleSort("date", response.data.notes);
     } catch (err: any) {
@@ -97,11 +103,20 @@ const ViewCourses = (user: { user: User | null }) => {
   if (error) {
     return <div className="text-red-500 text-xl text-center mt-8">{error}</div>;
   }
+  
+  if (user === null || course === null) return <Loading/>;
 
   const isAuthorized = () => {
-    const role = user?.user?.role;
+    const role = user.role;
     return role === "cr" || role === "admin";
   };
+
+  const isCanEnroll = () => {
+    return (user.semester == course.semester && (course.branch.includes(user.branch) || course.branch.length === 0))
+  }
+  const isEnrolled = () => {
+    return user.enrolledCourses.includes(course._id)
+  }
 
   const handleAddNotes = () => {
     setAddNotesPop(true);
@@ -131,6 +146,34 @@ const ViewCourses = (user: { user: User | null }) => {
     closeDelNotesPopup();
   }
 
+  const handleEnrollment = async () => {
+    try {
+			const response = await axios.post(`${API_URL}/content/course/enroll`, { courseId: course._id});
+      alert("Enrolled successfully!");
+      setEnrollPop(false);
+			navigate(0);
+		} catch (error: any) {
+			console.error("Error Enrolling course:", error);
+      alert(`Error: ${error?.response?.data?.error}`);
+			throw error;
+		}
+    // finally {
+      // setLoading(false);
+    // }
+  }
+  const handleUnenrollment = async () => {
+    try {
+			const response = await axios.post(`${API_URL}/content/course/unenroll`, { courseId: course._id});
+      alert("Unenrolled successfully!");
+      setUnenrollPop(false);
+			navigate(0);
+		} catch (error: any) {
+			console.error("Error Unenrolling course:", error);
+      alert(`Error: ${error?.response?.data?.error}`);
+			throw error;
+		}
+  }
+
   const menuItems = [
     {
       label: 'Add Notes',
@@ -151,10 +194,28 @@ const ViewCourses = (user: { user: User | null }) => {
       Back to Courses
     </Link>
     <div className="max-w-4xl mt-4 bg-white dark:bg-zinc-900 dark:bg-opacity-30 shadow-lg dark:shadow-xl rounded-lg p-6 border-t-2">
-      <h2 className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">{courseName}</h2>
-      <h3 className="text-2xl font-medium mb-6 text-gray-600 dark:text-gray-300">Course Notes</h3>
+      <h2 className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">{course.courseCode || course.courseName}</h2>
+      <p className="text-gray-600 mb-4">{course.description || <span className='font-light'>No description</span>}</p>
+      {
+        isCanEnroll()?
+        <div className='flex justify-end w-full'>
+          {
+            !isEnrolled()?
+            <Button onClick={() => setEnrollPop(true)} variant="default">
+              Enroll
+            </Button>
+            :
+            <Button onClick={() => setUnenrollPop(true)} variant="destructive">
+              Unenroll
+            </Button>
+          }
+        </div>
+        :
+        <p className="text-red-500">You are not eligible to enroll in this course.</p>
+      }
+      <h3 className={cn("text-2xl font-medium mb-6 text-gray-600 dark:text-gray-300", notes.length === 0?"hidden":"")}>Course Notes</h3>
       <div className='w-full overflow-x-auto scrollbar scrollbar-rounded pb-1'>
-      <table className="min-w-full table-auto bg-white dark:bg-zinc-900 rounded-lg">
+      <table className={cn("min-w-full table-auto bg-white dark:bg-zinc-900 rounded-lg", notes.length === 0?"hidden":"")}>
         <thead>
           <tr className="bg-gray-200 dark:bg-zinc-800">
             <th className="py-2 px-4 text-left font-semibold text-gray-700 dark:text-gray-200">
@@ -187,7 +248,12 @@ const ViewCourses = (user: { user: User | null }) => {
         </tbody>
       </table>
       </div>
-      {notes.length === 0 && <div className='text-center mt-3 px-1 py-3 bg-gray-50 dark:bg-zinc-900 min-w-full'>We don't have any notes at the moment.<br/>Please check back later.</div>}
+
+      {notes.length === 0 && <div className='text-center mt-3 px-1 py-3 bg-gray-50 dark:bg-zinc-900 min-w-full'>We don't have notes for {course.courseCode || course.courseName} at the moment.<br/>Please check back later.</div>}
+
+      {enrollPop && <AskConfirmation title={'Enroll'} confirmText={'Enroll'} description={'Are you sure you want to Enroll in this course?'} onClickConfirm={handleEnrollment} onClickCancel={() => {setEnrollPop(false)}}/>}
+      {unenrollPop && <AskConfirmation variant='destructive' title={'Unenroll'} confirmText={'Unenroll'} description={'Are you sure you want to Unenroll from this course?'} onClickConfirm={handleUnenrollment} onClickCancel={() => {setUnenrollPop(false)}}/>}
+
       {
         isAuthorized() && (
           <FABMenu items={menuItems} />
@@ -199,7 +265,7 @@ const ViewCourses = (user: { user: User | null }) => {
         addNotesPop && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90 z-50" onClick={handleAutoCloseAddNote}>
             <div className="max-h-[80vh] w-full max-w-2xl mx-2" ref={addNotesRef}>
-              <NotesUpload closePopup={closeAddNotesPopup} courseName={courseName} setIsEmpty={setAddNotesIsEmpty} />
+              <NotesUpload closePopup={closeAddNotesPopup} courseName={course.courseName} setIsEmpty={setAddNotesIsEmpty} />
             </div>
           </div>
         )}

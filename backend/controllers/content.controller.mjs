@@ -2,14 +2,19 @@ import formidable from 'formidable';
 import cloudinary from 'cloudinary';
 import Content from '../models/Content.model.mjs';
 import Course from '../models/Course.model.mjs';
+import User from '../models/User.model.mjs';
+import { User as UtilsUser } from '../utils/user.mjs';
+
+// TODO: handle the accessType and also check cr's branch so that cr can't update other branch's data
+// TODO: handle other branch's user can't enroll etc
 
 // add-newCourse
 export const addCourse = async (req, res) => {
   try {
-    const { courseName, courseCode,semester } = req.body;
+    const { courseName, courseCode, semester, branches, description } = req.body;
 
-    if (!courseName || !courseCode || !semester) {
-      return res.status(400).json({ error: 'Course name is required' });
+    if (!courseName || !courseCode || !semester || !branches || !description) {
+      return res.status(400).json({ error: 'Course details is required' });
     }
     // courseCode = courseCode.replace(/\s+/g, '').toUpperCase();
     const existingCourse = await Course.findOne({ courseCode });
@@ -21,6 +26,8 @@ export const addCourse = async (req, res) => {
       courseName,
       courseCode,
       semester,
+      description,
+      branch: branches,
       notes: [],
     });
 
@@ -135,7 +142,6 @@ export const getNoteById = async (req, res) => {
 //get-course-byId
 export const getCourse = async (req, res) => {
   try {
-    const user=req
     
     const courseId = req.params.id;
 
@@ -145,11 +151,72 @@ export const getCourse = async (req, res) => {
       return res.status(404).json({ error: 'Course not found' });
     }
 
-    res.status(200).json({ courseName: course.courseName, notes: course.notes });
+    res.status(200).json(course);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+export const enrollCourse = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    if (!courseId) {
+      return res.status(400).json({ error: 'courseId is required' });
+    }
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    const utilsUser = new UtilsUser(user.email);
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+    if (!(user.semester == course.semester && (course.branch.includes(user.branch) || course.branch.length === 0))) {
+      return res.status(403).json({ error: "you can't enroll in this course" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      { enrolledCourses: [...user.enrolledCourses, course] },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json({ success: true, user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+export const unenrollCourse = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    if (!courseId) {
+      return res.status(400).json({ error: 'courseId is required' });
+    }
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    const utilsUser = new UtilsUser(user.email);
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      { enrolledCourses: [...user.enrolledCourses.filter((enrolledCourse) => enrolledCourse._id != courseId)] },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json({ success: true, user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 
 //get-allCourses
 export const getAllCourses = async (req, res) => {
