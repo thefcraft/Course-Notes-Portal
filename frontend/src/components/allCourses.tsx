@@ -27,6 +27,8 @@ const AllCourses = ({ user }: { user: User|null }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [showEligibleOnly, setShowEligibleOnly] = useState(false)
 
+  const [isLoading, setIsLoading] = useState(true)
+
   if (user === null) return <Loading/>;
   
   const filteredCourses = courses.filter(course => 
@@ -51,6 +53,8 @@ const AllCourses = ({ user }: { user: User|null }) => {
       setCourses(response.data.courses);
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to fetch courses");
+    } finally{
+      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -86,6 +90,8 @@ const AllCourses = ({ user }: { user: User|null }) => {
     if (delCourseRef.current && delCourseRef.current.contains(e.target as Node)) return;
     closeDelCoursePopup();
   }
+
+  if (isLoading) return <Loading/>;
 
   const menuItems = [
     {

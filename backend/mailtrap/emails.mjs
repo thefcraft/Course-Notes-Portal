@@ -4,8 +4,8 @@ import { NODE_ENV } from "../utils/constants.mjs";
 
 
 export const sendVerficationEmail = async (email, verificationToken) => {
-    const recipient = [{email}]
-    try {
+  const recipient = [{email}]
+  try {
         if (NODE_ENV === "production"){
           const response = await mailtrapClient.send({
             from: sender,
@@ -15,10 +15,11 @@ export const sendVerficationEmail = async (email, verificationToken) => {
             category: "Email Verification",
           })
         }
+        
         console.log("Email sent successfully");
     }catch (error){
-        console.error(`Error sending verification`, error);
-		throw new Error(`Error sending verification email: ${error}`);
+      console.error(`Error sending verification`, error);
+		  throw new Error(`Error sending verification email: ${error}`);
     }
 }
 

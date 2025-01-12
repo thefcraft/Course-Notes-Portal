@@ -1,5 +1,47 @@
-{ 
-    "version": 2, 
-    "builds": [{ "src": "./backend/index.js", "use": "@vercel/node"}],
-    "routes": [{ "src": "/(.*)", "dest": "/"}]
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/index.mjs",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "frontend/dist/**/*",     
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/index.mjs"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "frontend/dist/assets/$1"
+    },
+    {
+      "src": "/vite.svg",
+      "dest": "frontend/dist/vite.svg"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/index.html"
+    }
+  ],
+  "env": {
+    "MONGODB_URI": "mongodb+srv://laksh:laksh002005@cluster0.ek0an6j.mongodb.net/auth_db?retryWrites=true&w=majority&appName=Cluster0",
+    "BACKEND_PORT": "5000",
+    "NODE_ENV": "production",
+    "JWT_SECRET": "v0g62IM9eLtQKl1peLtQKl1g62M9eLtQKl1peLtQK",
+    "MAILTRAP_TOKEN": "d446414476492dc3b947f03c2f83f5c0",
+    "CLOUD_NAME": "drjgdryev",
+    "CLOUD_API_KEY": "756762734912177",
+    "CLOUD_SECRET_KEY": "hNwwm7rybx0eb31aFlY8cpM7K0c",
+    "SMTP_HOST": "smtp.gmail.com",
+    "SMTP_PORT": "465",
+    "SMTP_SERVICE": "gmail",
+    "SMTP_MAIL": "kushalkesharwani21@gmail.com",
+    "SMTP_PASSWORD": "kvouehgpijvmmhyk",
+    "CORS_ORIGIN": "http://localhost:5173"
+  }
 }

@@ -6,14 +6,14 @@ import { API_URL } from '@/lib/constants';
 import { Content as Note } from '@/lib/types';
 
 const ViewNotes = () => {
-  const { id } = useParams<{ id: string }>();
+  const { courseId, id } = useParams<{ courseId: string, id: string }>();
   const [note, setNote] = useState<Note | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNote = async () => {
       try {
-        const response = await axios.get(`${API_URL}/content/view/${id}`);
+        const response = await axios.get(`${API_URL}/content/course/${courseId}/view/${id}`);
         setNote(response.data.note);
       } catch (err: any) {
         setError(err.response?.data?.error || 'Failed to fetch the note');

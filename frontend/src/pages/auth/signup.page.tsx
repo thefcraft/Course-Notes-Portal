@@ -10,6 +10,10 @@ import { Space } from '@/components/utils'
 import { useAuthStore } from '@/store/authStore'
 import { getStrength, getPasswordStrengthColor } from '@/pages/auth/utils.auth'
 import { authPrefix } from './constants.auth'
+import { auth as firebaseAuth, microsoftProvider } from '@/store/firebase'
+import { signInWithPopup, onAuthStateChanged } from 'firebase/auth'
+
+
 export default function SignUpPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -19,8 +23,41 @@ export default function SignUpPage() {
   const [passwordStrengthLabel, setPasswordStrengthLabel] = useState<string>('')
   const [passwordMatch, setPasswordMatch] = useState(true)
 
-  const { signup, error, isLoading } = useAuthStore();
+  
+
+  
+  const { signup, error, isLoading, signinMicrosoft, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if(isAuthenticated) return;
+    onAuthStateChanged(firebaseAuth, (userCred) => {
+      if(userCred){
+        console.log(userCred);
+        userCred.getIdToken().then((token) => {
+          console.log(token);
+          signinMicrosoft(token);
+        })
+      }
+    })
+  }, [])
+
+
+  const signInWithMicrosoft = () => {
+    console.log("Login");
+    signInWithPopup(firebaseAuth, microsoftProvider).then((result) => {
+      // console.log(result);
+      // const user = result.user
+      if(result){
+        console.log(result.operationType);
+        // TODO: reload the page please using 
+			  navigate(`/dashboard`);
+      }
+      // email, name 
+    }).catch((err) => {
+      alert(`Error: ${err}`)
+    })
+  }
   
 
   useEffect(() => {
@@ -40,7 +77,9 @@ export default function SignUpPage() {
 
   
   async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
+    event.preventDefault();
+    
+    return alert('please signup with microsoft as signup with email & password is disabled yet');
     // setIsLoading(true)
 
     if (password !== confirmPassword) {
@@ -180,7 +219,7 @@ export default function SignUpPage() {
               </span>
             </div>
           </div>
-          <Button variant="outline" type="button" disabled={isLoading}>
+          <Button variant="outline" type="button" disabled={isLoading} onClick={signInWithMicrosoft}>
             {isLoading ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : (

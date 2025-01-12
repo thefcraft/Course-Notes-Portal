@@ -5,11 +5,16 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+    },
+    uid: {
+        type: String,
+        required: false,
+        unique: true,
     },
     password: {
         type: String,
-        required: true
+        required: false
     },
     name: {
         type: String,
@@ -46,7 +51,6 @@ const userSchema = new mongoose.Schema({
         default:"user"
     },
 }, {timestamps: true}); // created and updated fields are automatically added using timestamps: true
-
 
 const User = mongoose.model('User', userSchema);
 

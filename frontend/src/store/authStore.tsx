@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import { API_URL } from "@/lib/constants";
 import { User } from "@/lib/types";
+import { auth as firebaseAuth } from '@/store/firebase'
 
 const AUTH_API_URL = `${API_URL}/auth`
 
@@ -17,6 +18,7 @@ interface AuthState {
 	message: string | null;
   
 	signup: (email: string, password: string, name: string) => Promise<void>;
+	signinMicrosoft: (token: string) => Promise<void>;
 	login: (email: string, password: string) => Promise<void>;
 	logout: () => Promise<void>;
 	verifyEmail: (email: string, code: string) => Promise<void>;
@@ -33,7 +35,18 @@ export const useAuthStore = create<AuthState>((set) => ({
 	isLoading: false,
 	isCheckingAuth: true,
 	message: null,
-
+	signinMicrosoft: async (token: string) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axios.post(`${AUTH_API_URL}/signinMicrosoft`, {
+				token: token
+			});
+			set({ user: response.data.user, isAuthenticated: true, isLoading: false });
+		} catch (error: any) {
+			set({ error: error.response?.data?.message || "Error signing up", isLoading: false });
+			throw error;
+		}
+	},
 	signup: async (email: string, password: string, name: string) => {
 		set({ isLoading: true, error: null });
 		try {
@@ -63,6 +76,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 	logout: async () => {
 		set({ isLoading: true, error: null });
 		try {
+			await firebaseAuth.signOut();
 			await axios.post(`${AUTH_API_URL}/logout`);
 			set({ user: null, isAuthenticated: false, error: null, isLoading: false});
 		} catch (error: any) {

@@ -32,7 +32,9 @@ function App() {
   	console.log("user", user);
   	console.log("isCheckingAuth", isCheckingAuth);	
 
-	if (isCheckingAuth) return <Loading/>
+	if (isCheckingAuth) return <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+		<Loading/>
+	</ThemeProvider>
 
 	return (
 	<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -85,7 +87,7 @@ function App() {
 										<Dashboard user={user} />
 									</ProtectedRoute>} />
 			 		  			{/* <Route path="/upload" element={<NotesUpload />}/> */}
-			 		  			<Route path="/view/:id" element={<ProtectedRoute verified>
+			 		  			<Route path="/view-course/:courseId/view/:id" element={<ProtectedRoute verified>
 															<ViewNotes />
 														</ProtectedRoute>}/>
 			 		  			<Route path="/view-course/:id" element={<ProtectedRoute verified>

@@ -1,0 +1,4 @@
+.vercel
+test.py
+node_modules
+.env

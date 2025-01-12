@@ -4,8 +4,95 @@ import User, {safeUserCredential} from "../models/User.model.mjs";
 import { generateTokenAndSetCookie } from "../utils/jwt.mjs";
 import { sendVerficationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } from "../mailtrap/emails.mjs";
 import { UtilsUser as UtilsUser } from '../utils/user.mjs';
-
+import admin from "../utils/firebase.mjs";
 // TODO: Remove the verification code from the response in the production version...
+
+const verifyFireBaseToken = async (req) => {
+    const {token} = req.body;
+    if (!token){
+        return {
+            success: false,
+            code: 401,
+            message: "Unauthorized"
+        }
+    }
+    try{
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        return {
+            success: true,
+            token: decodedToken
+        }
+    }catch(error){
+        return {
+            success: false,
+            code: 401,
+            message: "Unauthorized"
+        }
+    }
+
+}
+
+export const signinMicrosoft = async (req, res) => {
+    const firebase_verified = await verifyFireBaseToken(req);
+    if(!firebase_verified.success || !firebase_verified.token){
+        return res.status(firebase_verified.code).json({success:false, message: firebase_verified.message});
+    }
+    const {name, email, uid} = firebase_verified.token;
+    try{
+        if(!email || !name || !uid) throw new Error("Something Went wrong while decoding microsoft token");
+        const userAlreadyExists = await User.findOne({ email }) // email is unique...
+        const utilsUser = new UtilsUser(email)
+        if(!utilsUser.isValid){
+            return res.status(400).json({success:false, message: "Invalid domain, must be iitp.ac.in"});
+        }
+        if(userAlreadyExists && userAlreadyExists.isVerified){
+            const user = await User.findOne({ uid }) // email is unique...
+            if(!user){
+                return res.status(400).json({success:false, message: "User not exists"});
+            }
+            generateTokenAndSetCookie(res, user._id);
+            user.lastLogin = new Date();
+            await user.save();
+            res.status(200).json({
+                success: true,
+                message: "Logged in successfully",
+                user: safeUserCredential(user),
+            });
+        }
+        const user = (userAlreadyExists && !userAlreadyExists.isVerified)?
+            userAlreadyExists
+            :
+            new User({
+                email,
+                uid,
+                name,
+                branch:utilsUser.branch, // NOTE: each sem we have to run a script to update this in database...
+                semester:utilsUser.semester, // NOTE: each sem we have to run a script to update this in database...
+                isVerified: true
+            });
+
+        if (userAlreadyExists && !userAlreadyExists.isVerified){
+            user.name = name;
+            user.uid = uid;
+            user.isVerified = true;
+        }
+
+        await user.save();
+
+        // jwt
+
+        generateTokenAndSetCookie(res, user._id);
+
+		res.status(201).json({
+			success: true,
+			message: "User created successfully",
+			user: safeUserCredential(user),
+		});
+
+    }catch(error){
+        return res.status(400).json({success:false, message: error.message});
+    }
+}
 
 export const signup = async (req, res) => {
     const {email, password, name} = req.body;
@@ -48,7 +135,7 @@ export const signup = async (req, res) => {
 
         generateTokenAndSetCookie(res, user._id);
 
-        sendVerficationEmail(user.email, verificationToken);    
+        await sendVerficationEmail(user.email, verificationToken);    
 
 		res.status(201).json({
 			success: true,
@@ -138,7 +225,7 @@ export const forgotPassword = async (req, res) => {
         
         await user.save();
 
-        await sendPasswordResetEmail(user.email, `http://127.0.0.1:5000/reset-password/${resetToken}`);
+        await sendPasswordResetEmail(user.email, `http://127.0.0.1:5000/reset-password/${resetToken}`); // TODO
 
         return res.status(200).json({success: true, message: "Password reset link sent successfully", resetToken}); // TODO remove resetToken in prod
 
@@ -172,7 +259,7 @@ export const resetPassword = async (req, res) => {
 
         await user.save();
 
-        sendResetSuccessEmail(user.email);    
+        await sendResetSuccessEmail(user.email);    
 
 		res.status(200).json({
 			success: true,
@@ -222,11 +309,11 @@ export const resendOtp = async (req, res) => {
 
         generateTokenAndSetCookie(res, user._id);
 
-        sendVerficationEmail(user.email, user.verificationToken);    
-
+        await sendVerficationEmail(user.email, user.verificationToken);   
+        
 		res.status(201).json({
 			success: true,
-			message: "User created successfully",
+			message: "Email send successfully",
 			user: safeUserCredential(user),
 		});
 

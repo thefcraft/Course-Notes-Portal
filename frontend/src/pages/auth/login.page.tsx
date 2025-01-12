@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -8,16 +8,50 @@ import { useAuthStore } from '@/store/authStore'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useNavigate, Link } from 'react-router-dom'
 import { authPrefix } from './constants.auth'
+import { auth as firebaseAuth, microsoftProvider } from '@/store/firebase'
+import { signInWithPopup, onAuthStateChanged } from 'firebase/auth'
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-  const { login, error, isLoading } = useAuthStore();
+  const { login, error, isLoading, isAuthenticated, signinMicrosoft} = useAuthStore();
 
   const navigate = useNavigate();
 
+  
+  useEffect(() => {
+    if(isAuthenticated) return;
+    onAuthStateChanged(firebaseAuth, (userCred) => {
+      if(userCred){
+        console.log(userCred);
+        userCred.getIdToken().then((token) => {
+          console.log(token);
+          signinMicrosoft(token);
+        })
+      }
+    })
+  }, [])
+
+  const signInWithMicrosoft = () => {
+      console.log("Login");
+      signInWithPopup(firebaseAuth, microsoftProvider).then((result) => {
+      // console.log(result);
+      // const user = result.user
+      if(result){
+        console.log(result.operationType);
+			  navigate(`/dashboard`);
+      }
+      // email, name 
+    }).catch((err) => {
+      alert(`Error: ${err}`)
+    })
+  }
+  
+
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
+    return alert('please signin with microsoft as signin with email & password is disabled yet');
     try{
 			await login(email, password);
 			navigate(`/dashboard`);
@@ -97,7 +131,7 @@ export default function LoginPage() {
             </div>
           </div>
           
-          <Button variant="outline" type="button" disabled={isLoading}>
+          <Button variant="outline" type="button" disabled={isLoading} onClick={signInWithMicrosoft}>
             {isLoading ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : (

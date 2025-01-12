@@ -1,6 +1,5 @@
 export const authorizeRole = (requiredRoles) => {
   return (req, res, next) => {
-	console.log("hello2")
 
     try {
       const user = req.user;

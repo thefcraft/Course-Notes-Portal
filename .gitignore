@@ -1,6 +1,5 @@
-node_modules
-.env.mine
-.pytest_cache
-__pycache__
-test.ipynb
-.vscode
+.vercel
+firebase.mjs
+serviceAccount.json
+test.py
+vercel.json

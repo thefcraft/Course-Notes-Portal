@@ -117,7 +117,8 @@ export const upload = async (req, res) => {
         content: newContent,
       });
     } catch (uploadErr) {
-      res.status(500).json({ error: 'Failed to upload file to Cloudinary' });
+      console.log(uploadErr);
+      res.status(500).json({ error: `Failed to upload file to Cloudinary ${uploadErr.message}` });
     }
   });
 };
@@ -125,14 +126,21 @@ export const upload = async (req, res) => {
 //get-notes-byId
 export const getNoteById = async (req, res) => {
   try {
-    const { id } = req.params;
+    // TODO: // check is enrolled
+    const { courseId, id } = req.params;
 
-    const note = await Content.findById(id);
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-    if (!note) {
-      return res.status(404).json({ error: 'Note not found' });
+    // const course = await Course.findById(courseId).populate('notes');
+    // if (!course) return res.status(404).json({ error: 'Course not found' });
+    if (!user.enrolledCourses.includes(courseId)){
+      return res.status(403).json({ error: 'Please Enroll to the course first' });
     }
 
+    const note = await Content.findById(id);
+    if (!note) return res.status(404).json({ error: 'Note not found' });
+    
     res.status(200).json({ note });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -144,7 +152,7 @@ export const getCourse = async (req, res) => {
   try {
     
     const courseId = req.params.id;
-
+    
     const course = await Course.findById(courseId).populate('notes');
 
     if (!course) {
@@ -166,7 +174,7 @@ export const enrollCourse = async (req, res) => {
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
     
-    const utilsUser = new UtilsUser(user.email);
+    // const utilsUser = new UtilsUser(user.email);
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ error: 'Course not found' });

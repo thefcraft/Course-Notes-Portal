@@ -237,7 +237,7 @@ const ViewCourses = ({user}: { user: User | null }) => {
             <tr
               key={note._id}
               className="cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700"
-              onClick={() => window.location.href = `/view/${note._id}`}
+              onClick={() => window.location.href = `/view-course/${id}/view/${note._id}`}
             >
               <td className="py-2 px-4 text-gray-800 dark:text-gray-200">{note.title}</td>
               <td className="py-2 px-4 max-w-[150px] text-gray-600 dark:text-gray-400 truncate">{note.description}</td>

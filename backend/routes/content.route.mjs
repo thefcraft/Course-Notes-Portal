@@ -11,7 +11,7 @@ contentRoute.use(cookieParser());
 
 contentRoute.post('/add-course',verifyToken,authorizeRole("cr") ,addCourse);
 contentRoute.post('/upload',verifyToken,authorizeRole("cr"), upload);
-contentRoute.get('/view/:id',verifyToken, getNoteById);
+contentRoute.get('/course/:courseId/view/:id',verifyToken, getNoteById);
 contentRoute.get('/course/:id',verifyToken, getCourse);
 contentRoute.post('/course/enroll',verifyToken, enrollCourse);
 contentRoute.post('/course/unenroll',verifyToken, unenrollCourse);

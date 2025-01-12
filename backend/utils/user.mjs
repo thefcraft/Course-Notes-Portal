@@ -12,13 +12,23 @@ class Email {
     }
 }
 
+// Function to extract roll numbers
+const extractRollNumbers = (data) => {
+  return data.map(user => {
+    // Regex to match roll numbers in the format ####XX##
+    const match = user.match(/\d{4}[a-z]{2}\d{2}/i); // Match pattern for roll number
+    return match ? match[0] : null; // Return the roll number or null if not found
+  }).filter(Boolean); // Remove null values
+};
+
 export class UtilsUser {
     constructor(email) {
       this.email = new Email(email);
       const username = this.email.username;
-      const pos = username.lastIndexOf('_');
-      this.name = username.slice(0, pos);
-      this.rollno = username.slice(pos + 1);  // Everything after the last underscore
+      this.rollno = extractRollNumbers([username])[0];
+      // const pos = username.lastIndexOf('_');
+      // this.name = username.slice(0, pos);
+      // this.rollno = username.slice(pos + 1);  // Everything after the last underscore
     }
 
     get isValid(){
