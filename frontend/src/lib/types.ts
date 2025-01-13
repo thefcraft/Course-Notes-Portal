@@ -5,7 +5,6 @@ export interface User{
     _id: string,
     email: string,
     name: string,
-    isVerified: boolean,
     role: 'admin'|'user'|'cr',
     branch: Branch,
     semester: number,

@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import { MongoClient, ServerApiVersion  } from "mongodb"
+// import { MongoClient, ServerApiVersion  } from "mongodb"
 import { DB_URI } from "../utils/constants.mjs"
 let isConnected = false;
 export const connectDB = async () => {

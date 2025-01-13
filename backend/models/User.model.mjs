@@ -12,10 +12,6 @@ const userSchema = new mongoose.Schema({
         required: false,
         unique: true,
     },
-    password: {
-        type: String,
-        required: false
-    },
     name: {
         type: String,
         required: true
@@ -23,10 +19,6 @@ const userSchema = new mongoose.Schema({
     lastLogin: {
         type: Date,
         default: Date.now
-    },
-    isVerified: {
-        type: Boolean,
-        default: false
     },
     branch: { // may useful if there is some issue on users roll no, else use utils->user.mjs
         type: String,
@@ -41,10 +33,6 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course'
     }],
-    resetPasswordToken: String, // equivalent to {type: String}
-    resetPasswordExpiresAt: Date,
-    verificationToken: String,
-    verificationExpiresAt: Date,
     role: {
         type:String,
         enum: ['admin', 'user', 'cr'],
@@ -57,17 +45,11 @@ const User = mongoose.model('User', userSchema);
 export function safeUserCredential(user){
     if(NODE_ENV === "development"){
         return{
-            ...user._doc,
-            password: undefined
-        }   
+            ...user._doc
+        }
     }
     return {
-        ...user._doc,
-        password: undefined,
-        resetPasswordToken: undefined,
-        resetPasswordExpiresAt: undefined,
-        verificationToken: undefined,
-        verificationExpiresAt: undefined,
+        ...user._doc
     }
 }
 

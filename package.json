@@ -4,6 +4,6 @@
   "description": "",
   "scripts": {
     "install": "cd frontend && npm i && cd .. && cd backend && npm i && cd ..",
-    "dev": "cd frontend && npm run build && cd .. && vercel dev"
+    "dev": "vercel dev"
   }
 }

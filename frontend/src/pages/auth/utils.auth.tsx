@@ -1,11 +1,12 @@
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { ReactNode, useEffect, useState } from "react";
-import { authPrefix } from "./constants.auth";
+import { authPrefix, noBackend } from "./constants.auth";
 import toast from "react-hot-toast";
 import { Loading } from "@/components/utils";
 // protect routes that require authentication
-export const ProtectedRoute = ({ children, verified }: {children: ReactNode, verified?: boolean}) => {
+export const ProtectedRoute = ({ children }: {children: ReactNode}) => {
+  if (noBackend) return children; // just debug route
 	const { isAuthenticated, user, isCheckingAuth } = useAuthStore();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -21,19 +22,14 @@ export const ProtectedRoute = ({ children, verified }: {children: ReactNode, ver
 		return <Navigate to={`${authPrefix}/login`} replace />;
 	}
 
-	if (verified && !user.isVerified) {
-    toast.error("Please Verify Account");
-		const encodedEmail = encodeURIComponent(user.email);
-		return <Navigate to={`${authPrefix}/verify-email?email=${encodedEmail}`} replace />;
-	}
-
 	return children;
 };
 // redirect authenticated users to the home page
-export const RedirectAuthenticatedUser = ({ children, verified }: {children: ReactNode, verified?: boolean}) => {
+export const RedirectAuthenticatedUser = ({ children }: {children: ReactNode}) => {
+  if (noBackend) return children; // just debug route
 	const { isAuthenticated, user } = useAuthStore();
 
-	if (isAuthenticated && (verified?(user && user.isVerified):true)) {
+	if (isAuthenticated) {
 		return <Navigate to='/dashboard' replace />;
 	}
 

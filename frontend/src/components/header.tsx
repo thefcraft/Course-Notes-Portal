@@ -3,10 +3,10 @@ import { Icons } from "@/components/icons"
 import { Link } from 'react-router-dom';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { ModeToggle } from "@/components/mode-toggle"
-import { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
-export default function Header({ user, className }: {user:User|null, className?:string}) {
-  // const isVerified = user?.isVerified;
+import { useAuthStore } from "@/store/authStore";
+export default function Header({ className }: {className?:string}) {
+  const {isLoading, user} = useAuthStore(); 
   const isVerified = user;
   return (
     <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm h-16">
@@ -45,7 +45,12 @@ export default function Header({ user, className }: {user:User|null, className?:
           <ModeToggle />
           <Button asChild className="hidden md:inline-flex">
             {isVerified?
-                <Link to="/auth/logout">Logout</Link>
+                <Link to="/auth/logout">
+                  Logout
+                  {isLoading && (
+                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                </Link>
                 :
                 <Link to="/auth/login">Login</Link>
             }
@@ -66,7 +71,12 @@ export default function Header({ user, className }: {user:User|null, className?:
                     <Link to="/all-courses">Courses</Link>
                     <Link to="/profile">Profile</Link>
                     <Button asChild>
-                      <Link to="/auth/logout">Logout</Link>
+                      <Link to="/auth/logout">
+                        Logout
+                        {isLoading && (
+                          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                      </Link>
                     </Button>
                   </>
                   :

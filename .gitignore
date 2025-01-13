@@ -2,4 +2,5 @@
 firebase.mjs
 serviceAccount.json
 test.py
-vercel.json
+todo.md
+.env

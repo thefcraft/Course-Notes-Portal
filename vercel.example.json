@@ -1,4 +1,4 @@
-{
+ {
   "version": 2,
   "builds": [
     {
@@ -29,19 +29,11 @@
     }
   ],
   "env": {
-    "MONGODB_URI": "...",
-    "BACKEND_PORT": "...",
-    "NODE_ENV": "...",
-    "JWT_SECRET": "...",
-    "MAILTRAP_TOKEN": "...",
-    "CLOUD_NAME": "...",
-    "CLOUD_API_KEY": "...",
-    "CLOUD_SECRET_KEY": "...",
-    "SMTP_HOST": "...",
-    "SMTP_PORT": "...",
-    "SMTP_SERVICE": "...",
-    "SMTP_MAIL": "...",
-    "SMTP_PASSWORD": "...",
-    "CORS_ORIGIN": "..."
+    "MONGODB_URI": "mongodb://localhost:27017/notes-share-portal",
+    "NODE_ENV": "production",
+    "JWT_SECRET": "debug_only_secret",
+    "CLOUDINARY_NAME": "...",
+    "CLOUDINARY_API_KEY": "...",
+    "CLOUDINARY_SECRET_KEY": "..."
   }
 }

@@ -1,4 +1,22 @@
 import { Moon, SunMedium, Twitter, Github, Loader2, BookOpen, Menu, Bell, Search, User } from 'lucide-react'
+const MicrosoftLogo: React.FC<React.SVGProps<SVGSVGElement>> = (
+  props
+) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 23 23"
+      width="20"
+      height="20"
+      {...props}
+    >
+      <path fill="#f25022" d="M1 1h10v10H1z" />
+      <path fill="#00a4ef" d="M1 12h10v10H1z" />
+      <path fill="#7fba00" d="M12 1h10v10H12z" />
+      <path fill="#ffb900" d="M12 12h10v10H12z" />
+    </svg>
+  );
+};
 export const Icons = {
   sun: SunMedium,
   moon: Moon,
@@ -10,6 +28,7 @@ export const Icons = {
   bell: Bell,
   search: Search,
   user: User,
+  MicrosoftLogo: MicrosoftLogo
 //   logo: (props: ) => (
 //     <svg
 //       xmlns="http://www.w3.org/2000/svg"

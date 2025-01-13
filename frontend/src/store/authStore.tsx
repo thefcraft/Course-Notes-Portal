@@ -2,7 +2,10 @@ import { create } from "zustand";
 import axios from "axios";
 import { API_URL } from "@/lib/constants";
 import { User } from "@/lib/types";
-import { auth as firebaseAuth } from '@/store/firebase'
+import { auth as firebaseAuth, microsoftProvider } from '@/store/firebase'
+import { signInWithPopup } from 'firebase/auth'
+import { NavigateFunction } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const AUTH_API_URL = `${API_URL}/auth`
 
@@ -15,17 +18,13 @@ interface AuthState {
 	error: string | null;
 	isLoading: boolean;
 	isCheckingAuth: boolean;
-	message: string | null;
+	isCheckingFirebaseAuth: boolean;
   
-	signup: (email: string, password: string, name: string) => Promise<void>;
 	signinMicrosoft: (token: string) => Promise<void>;
-	login: (email: string, password: string) => Promise<void>;
+	signin: () => Promise<void>;
 	logout: () => Promise<void>;
-	verifyEmail: (email: string, code: string) => Promise<void>;
-	resendOtp: (email: string) => Promise<void>;
 	checkAuth: () => Promise<void>;
-	forgotPassword: (email: string) => Promise<void>;
-	resetPassword: (token: string, password: string) => Promise<void>;
+	// setLoading: (value: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -34,7 +33,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 	error: null,
 	isLoading: false,
 	isCheckingAuth: true,
-	message: null,
+	isCheckingFirebaseAuth: false,
+	// setLoading: (value: boolean) => {
+	// 	set({ isLoading: value});
+	// },
 	signinMicrosoft: async (token: string) => {
 		set({ isLoading: true, error: null });
 		try {
@@ -44,33 +46,20 @@ export const useAuthStore = create<AuthState>((set) => ({
 			set({ user: response.data.user, isAuthenticated: true, isLoading: false });
 		} catch (error: any) {
 			set({ error: error.response?.data?.message || "Error signing up", isLoading: false });
+			try {await firebaseAuth.signOut()}
+			catch (error: any) {}
 			throw error;
 		}
 	},
-	signup: async (email: string, password: string, name: string) => {
+	signin: async () => {
 		set({ isLoading: true, error: null });
-		try {
-			const response = await axios.post(`${AUTH_API_URL}/signup`, { email, password, name });
-			set({ user: response.data.user, isAuthenticated: true, isLoading: false });
-		} catch (error: any) {
-			set({ error: error.response?.data?.message || "Error signing up", isLoading: false });
-			throw error;
-		}
-	},
-	login: async (email: string, password: string) => {
-		set({ isLoading: true, error: null });
-		try {
-			const response = await axios.post(`${AUTH_API_URL}/login`, { email, password });
-			set({
-				isAuthenticated: true,
-				user: response.data.user,
-				error: null,
-				isLoading: false,
-			});
-			
-		} catch (error: any) {
-			set({ error: error.response?.data?.message || "Error logging in", isLoading: false });
-			throw error;
+		try{
+			const result = await signInWithPopup(firebaseAuth, microsoftProvider);
+			console.log(result.operationType);
+			set({ isLoading: true, isCheckingFirebaseAuth: true });
+		} catch (error: any){
+			set({ error: error.code || "Error signing up", isLoading: false });
+			toast.error(error.code || "Error signing up")
 		}
 	},
 	logout: async () => {
@@ -84,28 +73,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 			throw error;
 		}
 	},
-	verifyEmail: async (email: string, code: string) => {
-		set({ isLoading: true, error: null });
-		try {
-			const response = await axios.post(`${AUTH_API_URL}/verify-email`, { email, code });
-			set({ user: response.data.user, isAuthenticated: true, isLoading: false });
-			return response.data;
-		} catch (error: any) {
-			set({ error: error.response?.data?.message || "Error verifying email", isLoading: false });
-			throw error;
-		}
-	},
-	resendOtp: async (email: string) => {
-		set({ isLoading: true, error: null });
-		try {
-			const response = await axios.post(`${AUTH_API_URL}/resend-otp`, { email });
-			set({ user: response.data.user, isLoading: false });
-			return response.data;
-		} catch (error: any) {
-			set({ error: error.response?.data?.message || "Error verifying email", isLoading: false });
-			throw error;
-		}
-	},
 	checkAuth: async () => {
 		set({ isCheckingAuth: true, error: null });
 		try {
@@ -114,31 +81,5 @@ export const useAuthStore = create<AuthState>((set) => ({
 		} catch (error) {
 			set({ error: null, isCheckingAuth: false, isAuthenticated: false });
 		}
-	},
-	forgotPassword: async (email: string) => {
-		set({ isLoading: true, error: null });
-		try {
-			const response = await axios.post(`${AUTH_API_URL}/forgot-password`, { email });
-			set({ message: response.data.message, isLoading: false });
-		} catch (error: any) {
-			set({
-				isLoading: false,
-				error: error.response.data.message || "Error sending reset password email",
-			});
-			throw error;
-		}
-	},
-	resetPassword: async (token: string, password: string) => {
-		set({ isLoading: true, error: null });
-		try {
-			const response = await axios.post(`${AUTH_API_URL}/reset-password/${token}`, { password });
-			set({ message: response.data.message, isLoading: false });
-		} catch (error: any) {
-			set({
-				isLoading: false,
-				error: error.response.data.message || "Error resetting password",
-			});
-			throw error;
-		}
-	},
+	}
 }));
