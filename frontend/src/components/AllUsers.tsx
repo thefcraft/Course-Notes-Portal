@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/authStore";
 import { API_URL } from "@/lib/constants";
 import { User } from "@/lib/types";
+import { Loading } from "@/components/utils";
 const AllCourses = () => {
     const { user } = useAuthStore();
     console.log(user)
@@ -18,6 +19,7 @@ const AllCourses = () => {
     const [fabOpen, setFabOpen] = useState(false);
     const [updateRolePop, setUpdateRolePop] = useState(false);
     const updateRoleRef =  useRef<HTMLDivElement | null>(null);
+    const [featchingUsers, setFeatchingUsers] = useState(true);
 
     const fetchUsers = async () => {
         try {
@@ -27,6 +29,8 @@ const AllCourses = () => {
             setUsers(response.data.users);
         } catch (err: any) {
             setError(err.response?.data?.error || "Failed to fetch courses");
+        }finally{
+            setFeatchingUsers(false);
         }
     };
 
@@ -84,7 +88,7 @@ const AllCourses = () => {
             onClick: handleUpdateRole,
         },
     ];
-
+    if(featchingUsers) return <Loading/>
     return (
         <div className="p-4 bg-white dark:bg-zinc-950">
             <h1 className="text-2xl font-bold text-center mb-6 text-gray-700 dark:text-white">All Users</h1>
@@ -105,7 +109,7 @@ const AllCourses = () => {
 
             {updateRolePop && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-950 bg-opacity-50 z-50" onClick={handleAutoClosePopup}>
-                    <div className="max-w-md w-full mx-2" ref={updateRoleRef}>
+                    <div className="w-full max-w-2xl mx-2" ref={updateRoleRef}>
                         <UpdateRole users={users} updateRole={updateRole} closePopup={closePopup} />
                     </div>
                 </div>

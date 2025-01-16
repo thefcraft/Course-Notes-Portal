@@ -44,7 +44,7 @@ const FABMenu: React.FC<FABMenuProps> = ({ items, fabLabel = 'FAB Menu' }) => {
           {items.map((item, index) => (
             <DropdownMenuItem
               key={index}
-              className="cursor-pointer p-2 border-b hover:bg-zinc-800 rounded text-white"
+              className="cursor-pointer flex p-2 border-b hover:bg-zinc-800 rounded text-white"
               onClick={item.onClick}
             >
               {item.icon}

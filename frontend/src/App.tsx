@@ -60,7 +60,7 @@ function App() {
         	<Routes>
 				{/* AUTH Pages */}
 				<Route path="/auth/*" element={
-					<div className="min-h-screen w-full z-0">
+					<div className="min-h-dvh w-full z-0">
 						<Header/>
 						<main className="overflow-x-hidden overflow-y-auto bg-background min-h-full h-full -mt-16 pt-16 w-full">
 							<Routes>
@@ -79,7 +79,7 @@ function App() {
       		 	{/* Other Pages */}
       		 	<Route path="/*" element={<>
 					{/* <AppSidebar user={user} /> */}
-					<div className="min-h-screen w-full z-0">
+					<div className="min-h-dvh w-full z-0">
 						<Header/>
 						<main className="overflow-x-hidden bg-background min-h-full h-full -mt-16 w-full pt-16">
 							<Routes>

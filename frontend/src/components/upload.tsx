@@ -135,7 +135,7 @@ const NotesUpload = ({ closePopup,courseName, setIsEmpty }: NotesUploadProps) =>
             value={tags}
             onValueChange={(value: string[]) => {setTags(value); setIsEmpty(title==='' && value.length === 0 && description==='' && file===null)}}
             placeholder="Enter tags separated by comma"
-            className="w-full p-1 border rounded"
+            className="w-full p-1 border rounded  dark:bg-zinc-700 dark:border-zinc-600"
           />
           {/* <input
             type="text"
@@ -152,7 +152,6 @@ const NotesUpload = ({ closePopup,courseName, setIsEmpty }: NotesUploadProps) =>
             placeholder="Enter a brief description of the notes"
             className="w-full p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white scrollbar"
             rows={4}
-            required
           />
         </div>
 

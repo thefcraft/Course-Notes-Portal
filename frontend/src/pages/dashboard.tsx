@@ -18,18 +18,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 
 
-// { 
-//   id: '1', 
-//   code: 'MA2201', 
-//   name: 'Machine Learning', 
-//   instructor: 'Dr. Jane Doe', 
-//   schedule: {
-//     'Mon': '10:00 AM - 11:30 AM',
-//     'Wed': '11:00 AM - 12:30 PM',
-//     'Fri': '09:00 AM - 10:30 AM'
-//   }
-// },
-
 export default function DashboardPage({user}: {user: User|null}) {
   const [loadingCourse, setLoadingCourse] = useState<boolean>(true);
     
@@ -90,37 +78,11 @@ export default function DashboardPage({user}: {user: User|null}) {
                       <CardHeader>
                         <CardTitle className='line-clamp-2'>{course.courseCode}: {course.courseName}</CardTitle>
                         <CardDescription>
-                          <span className='line-clamp-1'>{"course.instructor"}</span>
+                          <span className='line-clamp-1'>{course.courseInstructor || 'Instructor not assigned'}</span>
                           <br/>
                           <p className='line-clamp-2'>{course.description}</p>
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="flex-grow">
-                        <div className="space-y-2">
-                          <h3 className="font-semibold flex items-center">
-                            <Clock className="w-4 h-4 mr-2" />
-                            Schedule:
-                          </h3>
-                          <div className="flex justify-between text-sm">
-                              <span className="font-medium">{"Mon"}:</span>
-                              <span>{"10:00 AM - 11:30 AM"}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                              <span className="font-medium">{"Wed"}:</span>
-                              <span>{"11:00 AM - 12:30 PM"}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                              <span className="font-medium">{"Fri"}:</span>
-                              <span>{"09:00 AM - 10:30 AM"}</span>
-                          </div>
-                          {/* {Object.entries(course.schedule).map(([day, time]) => (
-                            <div key={day} className="flex justify-between text-sm">
-                              <span className="font-medium">{day}:</span>
-                              <span>{time}</span>
-                            </div>
-                          ))} */}
-                        </div>
-                      </CardContent>
                       <CardFooter className='justify-center'>
                         <Link to={`/view-course/${course._id}`}>
                           <Button variant="outline" className="w-full">
@@ -135,8 +97,8 @@ export default function DashboardPage({user}: {user: User|null}) {
           </div>
           {
             !loadingCourse && enrolledCourses.length === 0 && (
-              <div className="text-center mt-6 p-6 bg-gray-100 border border-gray-300 rounded-lg">
-                <p className="text-xl text-gray-600 mb-4">You haven't enrolled in any courses yet.</p>
+              <div className="text-center mt-6 p-6 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg">
+                <p className="text-xl text-gray-600 dark:text-gray-400 mb-4">You haven't enrolled in any courses yet.</p>
                 <p className="text-sm text-gray-500 mb-6">Take a look at our available courses and sign up today!</p>
                 <Link to='/all-courses'>
                   <Button variant="outline" className="w-full max-w-sm mx-auto text-blue-600 border-blue-600 hover:bg-blue-50">

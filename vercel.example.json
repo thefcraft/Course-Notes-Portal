@@ -1,4 +1,4 @@
- {
+{
   "version": 2,
   "builds": [
     {
@@ -27,13 +27,5 @@
       "src": "/(.*)",
       "dest": "frontend/dist/index.html"
     }
-  ],
-  "env": {
-    "MONGODB_URI": "mongodb://localhost:27017/notes-share-portal",
-    "NODE_ENV": "production",
-    "JWT_SECRET": "debug_only_secret",
-    "CLOUDINARY_NAME": "...",
-    "CLOUDINARY_API_KEY": "...",
-    "CLOUDINARY_SECRET_KEY": "..."
-  }
+  ]
 }

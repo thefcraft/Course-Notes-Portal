@@ -1,6 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { addCourse, deleteCourse, deleteNotes, getAllCourses, getCourse, enrollCourse, unenrollCourse, getNoteById, upload } from '../controllers/content.controller.mjs';
+import { addCourse, updateCourse, deleteCourse, deleteNotes, getAllCourses, getCourse, enrollCourse, unenrollCourse, getNoteById, upload } from '../controllers/content.controller.mjs';
 import { verifyToken } from '../middleware/verifyToken.mjs';
 import { authorizeRole } from '../middleware/authorizeRoles.mjs';
 
@@ -10,6 +10,7 @@ contentRoute.use(express.json());
 contentRoute.use(cookieParser()); 
 
 contentRoute.post('/add-course',verifyToken,authorizeRole("cr") ,addCourse);
+contentRoute.put('/add-course',verifyToken,authorizeRole("cr") ,updateCourse);
 contentRoute.post('/upload',verifyToken,authorizeRole("cr"), upload);
 contentRoute.get('/course/:courseId/view/:id',verifyToken, getNoteById);
 contentRoute.get('/course/:id',verifyToken, getCourse);

@@ -25,7 +25,7 @@ const AllCourses = ({ user }: { user: User|null }) => {
   const [addCourseIsEmpty, setAddCourseIsEmpty] = useState<boolean>(true);
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [showEligibleOnly, setShowEligibleOnly] = useState(false)
+  const [showEligibleOnly, setShowEligibleOnly] = useState(true)
 
   const [isLoading, setIsLoading] = useState(true)
 
@@ -96,12 +96,12 @@ const AllCourses = ({ user }: { user: User|null }) => {
   const menuItems = [
     {
       label: 'Add Course',
-      icon: <Sparkles className="h-5 w-5 mr-2 text-gray-300" />,
+      icon: <Sparkles className="h-5 w-5 mt-1 mr-2 text-gray-300" />,
       onClick: handleAddCourse,
     },
     {
       label: 'Delete Course',
-      icon: <Trash2 className="h-5 w-5 mr-2 text-gray-300" />,
+      icon: <Trash2 className="h-5 w-5 mt-1 mr-2 text-gray-300" />,
       onClick: handleDeleteCourse,
     },
   ];
@@ -166,7 +166,7 @@ const AllCourses = ({ user }: { user: User|null }) => {
 
         {isAuthorized() && addCoursePop && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90 z-50" onClick={handleAutoCloseAddCourse}>
-            <div className="max-w-md w-full mx-2" ref={addCourseRef}>
+            <div className="w-full max-w-2xl mx-2" ref={addCourseRef}>
               <AddCourse closePopup={closeAddCoursePopup} setIsEmpty={setAddCourseIsEmpty} />
             </div>
           </div>

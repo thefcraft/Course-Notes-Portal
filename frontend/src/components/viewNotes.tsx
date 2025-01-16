@@ -4,6 +4,7 @@ import axios from 'axios';
 import { FileText, BookOpen, Tags, ArrowLeft } from 'lucide-react';
 import { API_URL } from '@/lib/constants';
 import { Content as Note } from '@/lib/types';
+import { Loading } from '@/components/utils';
 
 const ViewNotes = () => {
   const { courseId, id } = useParams<{ courseId: string, id: string }>();
@@ -28,7 +29,7 @@ const ViewNotes = () => {
   }
 
   if (!note) {
-    return <div className="text-gray-600 text-xl text-center mt-8">Loading...</div>;
+    return <Loading/>;
   }
 
   return (

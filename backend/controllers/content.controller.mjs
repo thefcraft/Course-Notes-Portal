@@ -11,9 +11,9 @@ import { UtilsUser as UtilsUser } from '../utils/user.mjs';
 // add-newCourse
 export const addCourse = async (req, res) => {
   try {
-    const { courseName, courseCode, semester, branches, description } = req.body;
+    const { courseName, courseCode, courseInstructor, semester, branches, description } = req.body;
 
-    if (!courseName || !courseCode || !semester || !branches || !description) {
+    if (!courseName || !courseCode || !courseInstructor || !semester || !branches || !description) {
       return res.status(400).json({ error: 'Course details is required' });
     }
     // courseCode = courseCode.replace(/\s+/g, '').toUpperCase();
@@ -25,6 +25,7 @@ export const addCourse = async (req, res) => {
     const newCourse = new Course({
       courseName,
       courseCode,
+      courseInstructor,
       semester,
       description,
       branch: branches,
@@ -44,6 +45,38 @@ export const addCourse = async (req, res) => {
     });
   }
 };
+export const updateCourse = async (req, res) => {
+  try {
+    const { courseId, courseName, courseCode, courseInstructor, semester, branches, description } = req.body;
+
+    if (!courseName || !courseCode || !courseInstructor || !semester || !branches || !description) {
+      return res.status(400).json({ error: 'Course details is required' });
+    }
+    // courseCode = courseCode.replace(/\s+/g, '').toUpperCase();
+    const updatedCourse = await Course.findByIdAndUpdate(courseId,
+      { courseName,
+        courseCode,
+        courseInstructor,
+        semester,
+        description,
+        branch: branches 
+      },
+    );
+    if (!updatedCourse) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+    
+    return res.status(201).json({
+      success: true,
+      course: updatedCourse,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: 'Failed to Update course. Please try again.',
+    });
+  }
+}
 
 //upload-notes
 export const upload = async (req, res) => {
@@ -56,7 +89,7 @@ export const upload = async (req, res) => {
     if (err) {
       return res.status(500).json({ error: 'Error parsing the file' });
     }
-
+    const user = req.user;
     const uploadedFile = files.file ? files.file[0] : null;
 
     if (!uploadedFile) {
@@ -90,10 +123,14 @@ export const upload = async (req, res) => {
         accessType,
         fileUrl: result.secure_url,
         fileName: uploadedFile.originalFilename,
+        uploadBy: user._id,
         course: null,
       });
 
       await newContent.save();
+
+      user.uploadedNotes.push(newContent._id);
+      await user.save();
 
       let course = await Course.findOne({ courseName });
 
@@ -129,7 +166,7 @@ export const getNoteById = async (req, res) => {
     // TODO: // check is enrolled
     const { courseId, id } = req.params;
 
-    const user = await User.findById(req.userId);
+    const user = req.user;
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
     // const course = await Course.findById(courseId).populate('notes');
@@ -153,8 +190,14 @@ export const getCourse = async (req, res) => {
     
     const courseId = req.params.id;
     
-    const course = await Course.findById(courseId).populate('notes');
-
+    const course = await Course.findById(courseId).populate({
+                                                              path: 'notes',
+                                                              populate: {
+                                                                path: 'uploadBy',  // The field to populate
+                                                                model: 'User',      // The model to use for the populate
+                                                                select: 'name semester branch role'      // Only select the 'name' field
+                                                              }
+                                                            });
     if (!course) {
       return res.status(404).json({ error: 'Course not found' });
     }
@@ -171,7 +214,7 @@ export const enrollCourse = async (req, res) => {
     if (!courseId) {
       return res.status(400).json({ error: 'courseId is required' });
     }
-    const user = await User.findById(req.userId);
+    const user = req.user;
     if (!user) return res.status(404).json({ error: 'User not found' });
     
     // const utilsUser = new UtilsUser(user.email);
@@ -202,7 +245,7 @@ export const unenrollCourse = async (req, res) => {
     if (!courseId) {
       return res.status(400).json({ error: 'courseId is required' });
     }
-    const user = await User.findById(req.userId);
+    const user = req.user;
     if (!user) return res.status(404).json({ error: 'User not found' });
     
     const utilsUser = new UtilsUser(user.email);
@@ -229,7 +272,7 @@ export const unenrollCourse = async (req, res) => {
 //get-allCourses
 export const getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find().populate('notes');
+    const courses = await Course.find();
     if (!courses || courses.length === 0) {
       return res.status(404).json({ error: 'No courses found' });
     }

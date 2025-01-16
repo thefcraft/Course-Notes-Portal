@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course'
     }],
+    uploadedNotes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Content'
+    }],
     role: {
         type:String,
         enum: ['admin', 'user', 'cr'],

@@ -90,13 +90,13 @@ export default function SignInPage() {
             transition={{ delay: 0.2 }}
             className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 py-0 sm:py-6"
           >
-            <div className="text-center p-4 rounded-lg bg-card border backdrop-blur-sm">
+            <div className="text-center p-4 rounded-lg bg-card/50 border backdrop-blur-sm">
               <BookOpen className="w-6 h-6 mx-auto mb-2 text-primary" />
               <p className="text-sm text-muted-foreground">
                 Access Course Notes
               </p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-card border backdrop-blur-sm">
+            <div className="text-center p-4 rounded-lg bg-card/50 border backdrop-blur-sm">
               <Share2 className="w-6 h-6 mx-auto mb-2 text-primary" />
               <p className="text-sm text-muted-foreground">Share Your Notes</p>
             </div>

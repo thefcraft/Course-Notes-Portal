@@ -12,9 +12,10 @@ export const getUserProfile = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.userId, req.body, { new: true });
-    if (!updatedUser) return res.status(404).json({ success: false, message: 'User not found' });
-    res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
+    res.status(403).json({ success: false, message: 'Request Forbidden'});
+    // const updatedUser = await User.findByIdAndUpdate(req.userId, req.body, { new: true });
+    // if (!updatedUser) return res.status(404).json({ success: false, message: 'User not found' });
+    // res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error', error });
   }

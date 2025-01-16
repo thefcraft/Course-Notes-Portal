@@ -55,7 +55,21 @@ const UpdateRole = ({ users, updateRole, closePopup }: UpdateRoleProps) => {
                     No users found
                 </p>
             ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-[70vh] overflow-y-auto px-6 scrollbar scrollbar-rounded">
+                    {filteredUsers.map((user: User) => (
+                        <div key={user._id} className="flex justify-between items-center gap-2">
+                            <span className="dark:text-white">{user.name}</span>
+                            <select
+                                value={user.role}
+                                onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                                className="p-2 border rounded dark:bg-zinc-700 dark:border-zinc-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                aria-label={`Change role for ${user.name}`}
+                            >
+                                <option value="user">User</option>
+                                <option value="cr">Class Representative</option>
+                            </select>
+                        </div>
+                    ))}
                     {filteredUsers.map((user: User) => (
                         <div key={user._id} className="flex justify-between items-center gap-2">
                             <span className="dark:text-white">{user.name}</span>

@@ -84,7 +84,7 @@ export const logout = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
     try{
-        const user = await User.findById(req.userId);
+        const user = req.user;
         if(!user){
             return res.status(400).json({success: false, message: "User not found"});
         }

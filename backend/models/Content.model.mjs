@@ -25,6 +25,10 @@ const contentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'Course', 
     }, 
+    uploadBy: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'User', 
+    },
     fileUrl: {
       type: String,
       required: true, 
