@@ -20,8 +20,12 @@
       "dest": "frontend/dist/assets/$1"
     },
     {
-      "src": "/vite.svg",
-      "dest": "frontend/dist/vite.svg"
+      "src": "/logo.svg",
+      "dest": "frontend/dist/logo.svg"
+    },
+    {
+      "src": "/og_img.png",
+      "dest": "frontend/dist/og_img.png"
     },
     {
       "src": "/(.*)",
