@@ -64,7 +64,7 @@ export default function ProfilePage({user}: {user: User | null}) {
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit" className="w-full" disabled>Update Profile</Button>
+              {/* <Button type="submit" className="w-full" disabled>Update Profile</Button> */}
             </form>
           </CardContent>
         </Card>

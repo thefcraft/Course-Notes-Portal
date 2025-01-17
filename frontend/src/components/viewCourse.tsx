@@ -274,7 +274,7 @@ const ViewCourses = ({user}: { user: User | null }) => {
             >
               <td className="py-2 px-4 max-w-[250px] text-gray-800 dark:text-gray-200 truncate">{note.title||'-'}</td>
               <td className="py-2 px-4 max-w-[200px] text-gray-600 dark:text-gray-400 truncate">{note.description||'-'}</td>
-              <td className="py-2 px-4 max-w-[250px] text-gray-600 dark:text-gray-400 truncate">{note.tags.join(', ') || '-'}</td>
+              <td className="py-2 px-4 max-w-[250px] text-gray-600 dark:text-gray-400 truncate">{note.tags.join(', ').split(',').map(tag => tag.trim()).join(', ') || '-'}</td>
               <td className="py-2 px-4 max-w-[200px] text-gray-600 dark:text-gray-400 truncate">{dateFormater(note.uploadedAt)||'-'}</td>
               <td className="py-2 px-4 max-w-[200px] text-gray-600 dark:text-gray-400 truncate">{note.uploadBy?note.uploadBy.name:'-'}</td>
             </tr>

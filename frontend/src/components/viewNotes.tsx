@@ -56,7 +56,7 @@ const ViewNotes = () => {
 
       <div className="note-tags mb-4">
         <h4 className="font-medium text-gray-700 dark:text-gray-300">Tags</h4>
-        <p className="text-gray-600 dark:text-gray-300">{note.tags.join(', ')}</p>
+        <p className="text-gray-600 dark:text-gray-300">{note.tags.join(', ').split(',').map(tag => tag.trim()).join(', ') || '-'}</p>
       </div>
 
       <div className="note-download mb-2 mt-6 text-center">

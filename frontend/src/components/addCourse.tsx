@@ -95,14 +95,14 @@ const AddCourse = ({ closePopup, setIsEmpty, defaultCourseId, defaultCourseName,
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Course added successfully!");
+        toast.success((defaultCourseId === undefined)?"Course added successfully!":"Course updated successfully!");
         closePopup();
       } else {
         toast.error(data.error);
       }
     } catch (error) {
-      console.error("Error adding course:", error);
-      toast.error("Something went wrong while adding the course.");
+      console.error((defaultCourseId === undefined)?"Error adding course:":"Error updating course:", error);
+      toast.error(`Something went wrong while ${(defaultCourseId === undefined)?'adding':'updating'} the course.`);
     } finally {
       setLoading(false);
     }

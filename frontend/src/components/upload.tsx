@@ -2,6 +2,7 @@ import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { Upload, FileText, Tags, BookOpen, X } from 'lucide-react';
 import { API_URL } from '@/lib/constants';
 import { TagsInput } from "@/components/ui/tag-input";
+import { Icons } from './icons';
 
 interface NotesUploadProps{ 
   closePopup: () => void ;
@@ -40,7 +41,7 @@ const NotesUpload = ({ closePopup,courseName, setIsEmpty }: NotesUploadProps) =>
     formData.append("file", file);
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("tags", tags.join(','));
+    formData.append("tags", tags.join(',').split(',').map(tag => tag.trim()).join(',').trim());
     formData.append("accessType", accessType);
     formData.append("course", courseName);
 
@@ -178,6 +179,8 @@ const NotesUpload = ({ closePopup,courseName, setIsEmpty }: NotesUploadProps) =>
           disabled={loading}
           >
           Upload Notes
+          {loading && 
+                    <Icons.spinner className="h-5 w-5 ml-2 animate-spin text-primary" />}
         </button>
       </form>
     </div>
