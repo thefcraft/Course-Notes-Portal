@@ -75,7 +75,7 @@ export default function DashboardPage({user}: {user: User|null}) {
                     className="flex flex-col h-full"
                   >
                     <Card className="flex flex-col h-full">
-                      <CardHeader>
+                      <CardHeader className='h-full'>
                         <CardTitle className='line-clamp-2'>{course.courseCode}: {course.courseName}</CardTitle>
                         <CardDescription>
                           <span className='line-clamp-1'>{course.courseInstructor || 'Instructor not assigned'}</span>

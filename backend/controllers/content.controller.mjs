@@ -148,14 +148,14 @@ export const upload = async (req, res) => {
       newContent.course = course._id;
       await newContent.save();
 
-      res.status(200).json({
+      return res.status(200).json({
         message: 'File uploaded successfully and content saved!',
         fileUrl: result.secure_url,
         content: newContent,
       });
     } catch (uploadErr) {
       console.log(uploadErr);
-      res.status(500).json({ error: `Failed to upload file to Cloudinary ${uploadErr.message}` });
+      return res.status(500).json({ error: `Failed to upload file to Cloudinary ${uploadErr.message}` });
     }
   });
 };
@@ -178,9 +178,9 @@ export const getNoteById = async (req, res) => {
     const note = await Content.findById(id);
     if (!note) return res.status(404).json({ error: 'Note not found' });
     
-    res.status(200).json({ note });
+    return res.status(200).json({ note });
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -202,9 +202,9 @@ export const getCourse = async (req, res) => {
       return res.status(404).json({ error: 'Course not found' });
     }
 
-    res.status(200).json(course);
+    return res.status(200).json(course);
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -234,9 +234,9 @@ export const enrollCourse = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
+    return res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
 export const unenrollCourse = async (req, res) => {
@@ -262,9 +262,9 @@ export const unenrollCourse = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
+    return res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
 
@@ -276,12 +276,12 @@ export const getAllCourses = async (req, res) => {
     if (!courses || courses.length === 0) {
       return res.status(404).json({ error: 'No courses found' });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       courses,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 

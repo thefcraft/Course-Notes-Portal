@@ -47,7 +47,7 @@ export const signinMicrosoft = async (req, res) => {
             userAlreadyExists.uid = uid;
             userAlreadyExists.lastLogin = new Date();
             await userAlreadyExists.save();
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 message: "Logged in successfully",
                 user: safeUserCredential(userAlreadyExists),
@@ -66,7 +66,7 @@ export const signinMicrosoft = async (req, res) => {
 
         generateTokenAndSetCookie(res, user._id);
 
-		res.status(201).json({
+		return res.status(201).json({
 			success: true,
 			message: "User created successfully",
 			user: safeUserCredential(user),
@@ -88,7 +88,7 @@ export const checkAuth = async (req, res) => {
         if(!user){
             return res.status(400).json({success: false, message: "User not found"});
         }
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             user: safeUserCredential(user),
         });

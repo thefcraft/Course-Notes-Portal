@@ -4,20 +4,20 @@ export const getUserProfile = async (req, res) => {
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
-    res.status(200).json({ success: true, user: safeUserCredential(user) });
+    return res.status(200).json({ success: true, user: safeUserCredential(user) });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error });
+    return res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
 export const updateUserProfile = async (req, res) => {
   try {
-    res.status(403).json({ success: false, message: 'Request Forbidden'});
+    return res.status(403).json({ success: false, message: 'Request Forbidden'});
     // const updatedUser = await User.findByIdAndUpdate(req.userId, req.body, { new: true });
     // if (!updatedUser) return res.status(404).json({ success: false, message: 'User not found' });
-    // res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
+    // return res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error });
+    return res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -37,10 +37,10 @@ export const updateUserRole = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
-    res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
+    return res.status(200).json({ success: true, user: safeUserCredential(updatedUser) });
   } catch (error) {
     console.error('Error updating user role:', error);
-    res.status(500).json({ success: false, message: 'Server error', error });
+    return res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -49,9 +49,9 @@ export const getPublicProfile = async (req, res) => {
   try {
     const user = await User.findById(req.params.user_id).select('name email profilePicture');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    res.status(200).json({ success: true, user: safeUserCredential(user) });
+    return res.status(200).json({ success: true, user: safeUserCredential(user) });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error });
+    return res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -65,13 +65,13 @@ export const getAllUsers = async (req, res) => {
         message: "No users found"
       });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       users: users.map(safeUserCredential)
     });
   } catch (error) {
     console.error("Error fetching users:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Server error",
       error: error.message
