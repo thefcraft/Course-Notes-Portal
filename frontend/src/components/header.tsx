@@ -14,7 +14,7 @@ export default function Header({ className }: {className?:string}) {
       <div className={cn("container mx-auto px-4 py-3 h-16 flex justify-between items-center", className)}>
         <Link to="/" className="flex-shrink-0 flex items-center pl-1">
             <GraduationCap className="w-8 h-8 text-primary" />
-            <h1 className="ml-2 text-xl font-bold tracking-tight">NotesHub</h1>
+            <h1 className="ml-2 text-xl font-bold tracking-tight">LinkIITP</h1>
         </Link>
         <nav className="hidden md:block">
             {isVerified?
