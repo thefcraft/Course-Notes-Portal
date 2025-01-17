@@ -13,7 +13,7 @@ export const addCourse = async (req, res) => {
   try {
     const { courseName, courseCode, courseInstructor, semester, branches, description } = req.body;
 
-    if (!courseName || !courseCode || !courseInstructor || !semester || !branches || !description) {
+    if (!courseName || !courseCode || !semester || !branches || !description) {
       return res.status(400).json({ error: 'Course details is required' });
     }
     // courseCode = courseCode.replace(/\s+/g, '').toUpperCase();
@@ -49,7 +49,7 @@ export const updateCourse = async (req, res) => {
   try {
     const { courseId, courseName, courseCode, courseInstructor, semester, branches, description } = req.body;
 
-    if (!courseName || !courseCode || !courseInstructor || !semester || !branches || !description) {
+    if (!courseName || !courseCode || !semester || !branches || !description) {
       return res.status(400).json({ error: 'Course details is required' });
     }
     // courseCode = courseCode.replace(/\s+/g, '').toUpperCase();

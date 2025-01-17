@@ -10,8 +10,7 @@ const courseSchema = new mongoose.Schema({
         required: true
     },
     courseInstructor: {
-        type: String,
-        required: true
+        type: String
     },
     semester:{
         type:Number,

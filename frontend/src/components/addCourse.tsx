@@ -183,7 +183,6 @@ const AddCourse = ({ closePopup, setIsEmpty, defaultCourseId, defaultCourseName,
             onChange={(e) => {setCourseInstructor(e.target.value); setIsEmpty(e.target.value==='' && courseName==='' &&  description ==='' && courseCode ==='' && semester === '')}}
             placeholder="Enter course name"
             className="w-full p-2 border border-zinc-300 dark:border-zinc-600 rounded dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
           />
         </div>
 

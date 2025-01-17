@@ -46,7 +46,7 @@ export interface Course{
     _id: string,
     courseName: string,
     courseCode: string,
-    courseInstructor: string,
+    courseInstructor?: string,
     description: string,
     semester: number,
     branch: Branch[],

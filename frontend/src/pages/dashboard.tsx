@@ -45,7 +45,7 @@ export default function DashboardPage({user}: {user: User|null}) {
 
 
   return (
-      <main className="flex-grow container mx-auto px-4 py-8 pt-20">
+      <main className="flex-grow container mx-auto px-4 py-8 pt-10">
         <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
         <section>
           <h2 className="text-2xl font-semibold mb-4">Enrolled Courses</h2>
