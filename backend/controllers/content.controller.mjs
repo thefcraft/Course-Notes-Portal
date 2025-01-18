@@ -171,7 +171,7 @@ export const getNoteById = async (req, res) => {
 
     // const course = await Course.findById(courseId).populate('notes');
     // if (!course) return res.status(404).json({ error: 'Course not found' });
-    if (!user.enrolledCourses.includes(courseId)){
+    if (!user.enrolledCourses.includes(courseId) && !user.role === 'admin'){
       return res.status(403).json({ error: 'Please Enroll to the course first' });
     }
 
