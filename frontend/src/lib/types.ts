@@ -11,6 +11,7 @@ export interface User{
     semester: number,
     enrolledCourses: string[], // [Course._id, ...]
     // more if needed
+    lastLogin: string
 }
 // export interface Note{ => changed to Content.model.mjs
 //     title: string,
