@@ -6,9 +6,6 @@ import { authorizeRole } from '../middleware/authorizeRoles.mjs';
 
 const contentRoute = express.Router();
 
-contentRoute.use(express.json()); 
-contentRoute.use(cookieParser()); 
-
 contentRoute.post('/add-course',verifyToken,authorizeRole("cr") ,addCourse);
 contentRoute.put('/add-course',verifyToken,authorizeRole("cr") ,updateCourse);
 contentRoute.post('/upload',verifyToken,authorizeRole("cr"), upload);
